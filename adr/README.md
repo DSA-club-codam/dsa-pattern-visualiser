@@ -23,3 +23,4 @@ Why the visualiser is built the way it is. One file per decision. To change a de
 | 017 | Page layout: animation and code on the left, state and controls on the right |
 | 018 | Pattern names stay broad |
 | 019 | Automatic check on GitHub; AI has no autonomy in the repository |
+| 020 | The site is published by GitHub Actions, only after a green check |

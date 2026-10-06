@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(gh repo delete *)",
+      "Bash(gh repo archive *)",
+      "Bash(gh repo rename *)",
+      "Bash(gh api *-X DELETE*)",
+      "Bash(gh api *--method DELETE*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push *--force*)",
+      "Bash(git push * -f*)",
+      "Bash(git push *--delete*)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git reset --hard*)",
+      "Bash(gh *)"
+    ]
+  }
+}
