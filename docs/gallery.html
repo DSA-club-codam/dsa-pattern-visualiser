@@ -11,15 +11,25 @@
 <body>
 <!-- Source: core/gallery.html (copied by build.py). Everything here is drawn by core/viz.js, so it always matches the real pages. -->
 <div class="wrap">
+  <a class="vz-back" href="index.html">← Main page</a>
   <header class="vz-header"><h1>Design gallery</h1></header>
   <p class="note">Every building block of the visualiser, drawn live by the shared engine. If a new problem needs something that is not on this page, it is proposed first, then added here, and only then used.</p>
   <div class="vz-meta">
-    <a href="index.html">All visualisations</a>
     <span class="lbl note">Theme:</span>
     <button data-theme-btn="auto" aria-pressed="true">Auto</button>
     <button data-theme-btn="light" aria-pressed="false">Light</button>
     <button data-theme-btn="dark" aria-pressed="false">Dark</button>
   </div>
+
+  <section class="gl-section"><h2>Problem page header</h2>
+    <p>Back link, title row and meta row. The meta row changes with the approach tab. "Pattern guide" links to site.json patternGuides[pattern], or the general Notion page when none is set. Problem pages have no footer.</p>
+    <div class="panel">
+      <a class="vz-back" href="index.html">← Main page</a>
+      <header class="vz-header"><h1>LC 2958 · Length of Longest Subarray With at Most K Frequency</h1>
+        <span class="pill medium">Medium</span><a class="ext" href="#">Open on LeetCode ↗</a></header>
+      <div class="vz-meta"><span class="badge">Sliding window</span><span class="badge ds">Hash map</span>
+        <span class="cx">O(n) time · O(n) space</span> <a class="ext" href="#">Big-O ↗</a> <a class="ext" href="#">Pattern guide ↗</a></div>
+    </div></section>
 
   <section class="gl-section"><h2>Colour roles</h2>
     <p>One colour means one thing on every page. Meaning is never carried by colour alone: there is always a label, a shape or a line style too.</p>
@@ -54,7 +64,7 @@
       <label>Speed <input type="range" min="1" max="10" value="5"></label><span class="vz-counter">Step 15 / 21</span></div></section>
 
   <section class="gl-section"><h2>Legend swatches</h2>
-    <p>The name next to each swatch is what approach.json uses in "legend".</p>
+    <p>The name next to each swatch is what approach.json uses in "legend". Problem pages do not show the legend for now (ADR 023), but every approach still lists it.</p>
     <div class="panel vz-legend" id="gl-legend"></div></section>
 
   <section class="gl-section"><h2>Code drawer</h2>
@@ -62,7 +72,6 @@
       <div class="vz-codebar"><div class="vz-tabs"><button aria-selected="true">Python3<span class="acc">✓</span></button><button aria-selected="false">C++17</button><button aria-selected="false">C</button></div><button type="button" class="vz-copy" id="gl-copy">Copy</button></div>
       <div id="gl-code"></div><p class="note">✓ = accepted on LeetCode in that language.</p></details></section>
 
-  <footer class="vz-footer"><a href="index.html">All visualisations</a></footer>
 </div>
 <script src="core/viz.js"></script>
 <script>

@@ -376,6 +376,7 @@
     const body = `<div class="vz-stage"><div class="vz-col">${parts.canvas}${parts.code}</div>
            <div class="vz-col">${parts.aux}${parts.controls}${parts.caption}</div></div>`;
     root.innerHTML = `
+      <a class="vz-back" href="index.html">← Main page</a>
       <header class="vz-header"><h1>${esc(label)}${esc(P.title)}</h1>
         <span class="pill ${esc(P.difficulty.toLowerCase())}">${esc(P.difficulty)}</span>
         ${SRC.url ? `<a class="ext" href="${esc(SRC.url)}" target="_blank" rel="noopener">Open on ${esc(SRC.site || "the source site")} ↗</a>` : ""}</header>
@@ -385,9 +386,7 @@
       <details class="panel" id="vz-constraints"><summary>Constraints — what they tell you</summary><div id="vz-constraints-body"></div></details>
       <details class="panel" id="vz-card"><summary>Why this pattern?</summary><div id="vz-card-body"></div></details>
       <div class="vz-examples" id="vz-examples" role="group" aria-label="Example input"></div>
-      ${body}
-      <details class="panel" id="vz-legend-wrap"><summary>Legend</summary><div class="vz-legend" id="vz-legend" aria-label="Legend"></div></details>
-      <footer class="vz-footer" id="vz-footer"></footer>`;
+      ${body}`;
     const $ = (id) => document.getElementById(id);
 
     // ---------- constraints (problem level) ----------
@@ -407,15 +406,6 @@
         `<p class="vz-sub"><b>Rule of thumb:</b> about 10⁸ simple operations run in one second. Find the row for n to see which complexity is fast enough.` +
         (hit >= 0 ? ` Here n can be up to ${fmtN(P.nMax)}.` : "") + `</p>` +
         `<div class="vz-table-wrap"><table class="vz-table"><thead><tr><th>n</th><th>Fast enough</th><th>Typical approach</th></tr></thead><tbody>${sheet}</tbody></table></div>`;
-    })();
-
-    // ---------- footer ----------
-    (function footer() {
-      const links = [`<a href="index.html">All visualisations</a>`];
-      if (S.notionPatterns) links.push(`<a href="${esc(S.notionPatterns)}" target="_blank" rel="noopener">Pattern guides (Notion) ↗</a>`);
-      if (S.bigO) links.push(`<a href="${esc(S.bigO)}" target="_blank" rel="noopener">Big-O reference ↗</a>`);
-      if (S.leetcodeProfile) links.push(`<a href="${esc(S.leetcodeProfile)}" target="_blank" rel="noopener">Accepted solutions on LeetCode ↗</a>`);
-      $("vz-footer").innerHTML = links.join("");
     })();
 
     // ---------- approach tabs ----------
@@ -445,10 +435,12 @@
       if (push !== false && approaches.length > 1) history.replaceState(null, "", "#" + A.id);
       document.querySelectorAll("#vz-approaches [data-a]").forEach((b) => b.setAttribute("aria-selected", +b.dataset.a === i));
       const bigO = S.bigO ? ` <a class="ext" href="${esc(S.bigO)}" target="_blank" rel="noopener">Big-O ↗</a>` : "";
+      const guideUrl = (S.patternGuides || {})[A.pattern] || S.notionPatterns;
+      const guide = guideUrl ? ` <a class="ext" href="${esc(guideUrl)}" target="_blank" rel="noopener">Pattern guide ↗</a>` : "";
       $("vz-meta").innerHTML =
         `<span class="badge">${esc(A.pattern)}</span>` +
         (A.ds || []).map((d) => `<span class="badge ds">${esc(d)}</span>`).join("") +
-        `<span class="cx">${esc(A.time)} time · ${esc(A.space)} space</span>${bigO}`;
+        `<span class="cx">${esc(A.time)} time · ${esc(A.space)} space</span>${bigO}${guide}`;
       const C = A.card || {};
       const bf = P.bruteForce || {};
       $("vz-card-body").innerHTML =
@@ -460,7 +452,7 @@
         `<li id="vz-ops"></li></ul>` +
         (bf.code ? `<details><summary>Brute force code (Python3)</summary><div id="vz-bf-code"></div></details>` : "");
       if (bf.code) $("vz-bf-code").append(VIZ.codeBlock(bf.code));
-      VIZ.legend($("vz-legend"), A.legend || []);
+      // approach.legend is kept in the data but not shown for now (ADR 023)
       buildCode(A);
       // examples
       const ex = A.examples;

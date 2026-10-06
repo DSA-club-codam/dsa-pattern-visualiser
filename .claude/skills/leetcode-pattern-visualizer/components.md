@@ -5,8 +5,9 @@
 ## Page order
 | # | Block | Shown | Data |
 |---|---|---|---|
+| 0 | "← Main page" link (index.html) | always | — |
 | 1 | Header: "LC N · Title", difficulty, Open on <site> ↗ | always | problem.source |
-| 2 | Meta: pattern badge, data-structure badges, time · space, Big-O ↗ | always (changes with the tab) | approach |
+| 2 | Meta: pattern badge, data-structure badges, time · space, Big-O ↗, Pattern guide ↗ (site.json patternGuides[pattern], else notionPatterns) | always (changes with the tab) | approach, site.json |
 | 3 | Approach tabs | only with 2+ approaches | approaches |
 | 4 | Compare approaches (collapsed table) | only with 2+ approaches | approach.time/space/whenToUse |
 | 5 | Constraints — what they tell you (collapsed): table + "n → fast enough" rule of thumb with the matching row highlighted | always | problem.constraints, problem.nMax |
@@ -17,8 +18,8 @@
 | 10 | Caption: phase tag, caption, invariant | always | step |
 | 11 | Controls: Reset, Prev, Play/Pause, Next, speed, "Step n / N"; keys ← → Space Home | always | — |
 | 12 | Code drawer (collapsed "Show code"): tabs Python3 · C++17 · C, ✓ if accepted, current line highlighted via anchors, "Copy" button (copies the open tab's code without line numbers), "No C version: …" note. Line numbers are drawn by CSS (`.ln::before { content: attr(data-n) }`), so selecting and copying never includes them | always | approach.code |
-| 13 | Legend (collapsed, at the bottom) | always | approach.legend |
-| 14 | Footer: All visualisations, Notion guides, Big-O, LeetCode profile (if set) | always | site.json |
+
+Not on problem pages: no footer (the LeetCode profile link is on the main page only), and no legend for now (ADR 023). approach.json still carries "legend" for every approach, so it can come back without rework.
 
 ## Layout (ADR 017)
 - From 900px: left column = canvas, code drawer under it; right column = side panels, controls, caption. Controls sit above the caption so the Next button stays in place. The code box scrolls inside itself (max 60% of the screen height) and keeps the highlighted line in view.

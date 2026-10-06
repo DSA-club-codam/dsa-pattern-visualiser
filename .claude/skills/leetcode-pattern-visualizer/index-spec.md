@@ -18,7 +18,7 @@ Source: core/index.html + core/index.js. Content: docs/catalogue.js, generated b
 | Guide | one "guide ↗" per approach: site.json patternGuides[pattern], else the general Notion link | no |
 
 5. Articles: a simple list, only when site.json has articles.
-6. Footer: problem count, Big-O reference, the small "ai-panic" link (only when repoUrl is set).
+6. Footer: problem count and Big-O reference. No ai-panic link: the ai-panic/ folder stays in the repo and in the README, but the site does not link to it.
 
 ## Problems with several approaches
 One row per problem, never duplicated. Pattern, Data structure and Guide show one line per approach, and each pattern line links to its tab. With a pattern or data-structure filter on, the row shows only the matching approaches; the links still open the right tab.

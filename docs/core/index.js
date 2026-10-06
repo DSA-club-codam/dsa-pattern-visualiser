@@ -110,7 +110,6 @@
 
   const foot = [`<span id="ix-count"></span>`];
   if (S.bigO) foot.push(`<a href="${esc(S.bigO)}" target="_blank" rel="noopener">Big-O reference ↗</a>`);
-  if (S.repoUrl) foot.push(`<a class="easter" href="${esc(S.repoUrl)}/tree/main/ai-panic" target="_blank" rel="noopener" title="Things the AI worried about. Most of them never happened.">ai-panic</a>`);
   document.getElementById("ix-footer").innerHTML = foot.join("");
   render();
 })();

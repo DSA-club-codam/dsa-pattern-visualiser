@@ -78,7 +78,7 @@ site.json        site-wide links
    - Removing every @trace line must leave a clean, submittable solution. build.py tests both versions.
    - Write it so it could be ported to JavaScript line by line later (ADR 005): no clever Python-only tricks in the logic.
 3. **solution.cpp** (always) and **solution.c** (only if allowed): same logic, same anchor names (`// @a:<name>`), `// @hide` on includes and `using namespace std;`. Use long long where overflow is possible, `mid = lo + (hi - lo) / 2`.
-4. **approach.json** — name, pattern, ds, complexity, pattern card (signals, pattern, core idea), invariant, phase labels, legend (only roles used on this page), whenToUse, accepted: [].
+4. **approach.json** — name, pattern, ds, complexity, pattern card (signals, pattern, core idea), invariant, phase labels, legend (only roles used on this page; not shown for now but always written, ADR 023), whenToUse, accepted: [].
 5. **canvas.js** — an object `({ build(ctx) {...}, render(step, ctx, flash) {...} })`. Pick the canvas from components.md. Map the semantic state from solution.py to VIZ helpers. If two approaches need the same new canvas, move it into core as a helper (with approval).
 6. Run build.py and review as in workflow A.
 

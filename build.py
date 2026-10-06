@@ -590,7 +590,7 @@ def emit(pages, site):
             write(os.path.join(DOCS, rel), "/* Generated from problems/%s/%s/canvas.js */\nVIZ.canvas.register(%s, %s);\n"
                   % (name, a["id"], json.dumps(a["canvas"]), a.pop("_canvas_src")))
             tags.append('<script src="%s"></script>' % rel)
-        page["site"] = {k: site.get(k, "") for k in ("notionPatterns", "bigO", "leetcodeProfile")}
+        page["site"] = {k: site.get(k, "") for k in ("notionPatterns", "patternGuides", "bigO")}
         p = page["problem"]
         title = "%s · %s" % (source_label(p["source"]), p["title"]) if source_label(p["source"]) else p["title"]
         desc = "Step-by-step visualisation: " + "; ".join(a["name"] for a in page["approaches"])

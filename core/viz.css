@@ -8,6 +8,7 @@ code, pre, .mono { font-family: var(--font-mono); }
 @media (min-width: 900px) { .wrap { padding: 28px 32px 48px; } }
 
 /* ---------- header ---------- */
+.vz-back { display: inline-block; margin-bottom: 8px; font-size: var(--fs-small); }
 .vz-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; }
 .vz-header h1 { font-size: var(--fs-title); margin: 0; }
 .vz-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 8px; }
@@ -221,7 +222,6 @@ pre.code { margin: 0; padding: 8px 0; background: var(--code-bg); border-radius:
 .ix-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 18px; font-size: 14px; color: var(--muted); }
 .ix-filters label { display: flex; align-items: center; gap: 6px; }
 .ix-filters select { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; max-width: 220px; }
-.easter { opacity: .5; }
 
 /* ---------- gallery ---------- */
 .gl-section { margin-top: 26px; }

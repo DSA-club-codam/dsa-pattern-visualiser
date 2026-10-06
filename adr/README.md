@@ -26,3 +26,4 @@ Why the visualiser is built the way it is. One file per decision. To change a de
 | 020 | The site is published by GitHub Actions, only after a green check |
 | 021 | Pointer names for merging two arrays: p1 / p2 / write |
 | 022 | One "Two pointers" label for the whole family (supersedes 018) |
+| 023 | No legend on problem pages for now; the data is kept |

@@ -44,6 +44,8 @@ left / right — towards each other, and sliding window edges · slow / fast —
 `current`, `swap`, `conflict` (+ tag), `dup`, `done`, `best`, `new`, `zero`, `removed`, `out`. Several can combine (e.g. `zero swap`).
 
 ## 5. Legend swatch names (approach.json → "legend")
+Problem pages do not show the legend for now (ADR 023). Keep writing it for every approach.
+
 `ptr-back`, `ptr-front`, `ptr-mid`, `current`, `swap`, `conflict`, `dup`, `done`, `best`, `new`, `zero`, `removed`, `out`, `band-window`, `band-best`, `band-gap`, `bar`, `slot`, `slot-over`. List only the ones used on that page, with a label tied to the problem ("left: left edge of the window").
 
 ## 6. Size limits (ADR 012)

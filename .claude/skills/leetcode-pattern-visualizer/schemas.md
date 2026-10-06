@@ -97,7 +97,7 @@ State is a full snapshot (not a diff), so any step can be shown on its own (Prev
   "patternGuides": { "Sliding window (variable)": "https://..." },  // optional per-pattern links
   "bigO": "https://www.bigocalc.com/",
   "leetcodeProfile": "",                    // empty = hidden
-  "repoUrl": "",                            // empty = ADR and ai-panic links hidden
+  "repoUrl": "",                            // empty = "Source on GitHub" link hidden
   "articles": [{ "title": "...", "url": "https://dev.to/...", "tags": ["Sliding window (variable)"] }]
 }
 ```
