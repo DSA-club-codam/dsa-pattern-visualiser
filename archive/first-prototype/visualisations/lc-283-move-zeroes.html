@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Move Zeroes Visualiser</title>
+<style>
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: #dcdcd8;
+  --code-bg: #f1f1ee; --code-hl: #fff2b8;
+  --write: #2563eb; --read: #ea7a0c; --current: #fcd34d; --current-ink: #3b2f00;
+  --swap: #7c3aed; --done: #16a34a; --done-bg: #dcfce7; --zero: #9a9aa0; --zero-bg: #ececea;
+  --gap-band: rgba(120,120,130,.13); --done-band: rgba(22,163,74,.12);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141416; --panel: #1d1d20; --ink: #ececef; --muted: #9c9ca4; --line: #34343a;
+    --code-bg: #18181b; --code-hl: #4a3f12;
+    --write: #60a5fa; --read: #fb923c; --current: #facc15; --current-ink: #2a2100;
+    --swap: #a78bfa; --done: #4ade80; --done-bg: #14361f; --zero: #7c7c84; --zero-bg: #26262b;
+    --gap-band: rgba(160,160,170,.12); --done-band: rgba(74,222,128,.12);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141416; --panel: #1d1d20; --ink: #ececef; --muted: #9c9ca4; --line: #34343a;
+  --code-bg: #18181b; --code-hl: #4a3f12;
+  --write: #60a5fa; --read: #fb923c; --current: #facc15; --current-ink: #2a2100;
+  --swap: #a78bfa; --done: #4ade80; --done-bg: #14361f; --zero: #7c7c84; --zero-bg: #26262b;
+  --gap-band: rgba(160,160,170,.12); --done-band: rgba(74,222,128,.12);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 20px 16px 40px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; }
+h1 { font-size: 22px; margin: 0; }
+.badge { background: var(--write); color: #fff; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 600; }
+.cx { color: var(--muted); font-size: 14px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+details.panel { margin-top: 14px; }
+summary { cursor: pointer; font-weight: 600; }
+details ul { margin: 8px 0 0; padding-left: 20px; }
+details li { margin: 3px 0; }
+.examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; align-items: center; }
+.examples span { color: var(--muted); font-size: 14px; }
+button { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line);
+  border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+button:hover { border-color: var(--muted); }
+button[aria-pressed="true"] { border-color: var(--write); box-shadow: inset 0 0 0 1px var(--write); }
+code, pre, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+.main { display: flex; flex-direction: column; gap: 14px; }
+
+/* canvas */
+.canvas { display: flex; flex-direction: column; justify-content: center; padding-top: 22px; overflow: hidden; }
+.track { position: relative; margin: 0 auto; }
+.zone { position: absolute; top: 34px; border-radius: 8px; transition: left .3s, width .3s; }
+.zone.done { background: var(--done-band); }
+.zone.gap { background: var(--gap-band); }
+.zonelbl { position: absolute; top: 0; font-size: 11px; color: var(--muted); white-space: nowrap;
+  transition: left .3s; transform: translateX(-50%); }
+.arc { position: absolute; top: 22px; height: 12px; border: 2px solid var(--swap); border-bottom: 0;
+  border-radius: 8px 8px 0 0; transition: opacity .2s; }
+.arc span { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 11px;
+  color: var(--swap); font-weight: 700; background: var(--panel); padding: 0 4px; }
+.cell { position: absolute; top: 40px; display: grid; place-items: center; border-radius: 8px;
+  border: 2px solid var(--line); background: var(--panel); font-weight: 700;
+  transition: transform .35s ease, background .25s, border-color .25s, color .25s; }
+.cell.zero { border-style: dashed; border-color: var(--zero); color: var(--zero); background: var(--zero-bg); }
+.cell.done { border-color: var(--done); background: var(--done-bg); }
+.track.small .cell.done::after { display: none; }
+.cell.done::after { content: "✓"; position: absolute; top: -1px; right: 3px; font-size: 10px; color: var(--done); }
+.cell.current { background: var(--current); color: var(--current-ink); border-color: var(--current); border-style: solid; }
+.cell.swap { border-color: var(--swap); border-style: solid; box-shadow: 0 0 0 2px var(--swap); }
+.idx { position: absolute; text-align: center; font-size: 12px; color: var(--muted); }
+.ptr { position: absolute; text-align: center; font-size: 12px; font-weight: 700; line-height: 1.1;
+  transition: left .3s, opacity .2s; }
+.ptr.write { color: var(--write); }
+.ptr.read { color: var(--read); }
+
+/* side panel */
+.side { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 860px) { .side { grid-template-columns: minmax(0, 1fr); } }
+pre.code { margin: 0; padding: 8px 0; background: var(--code-bg); border-radius: 8px; overflow-x: auto; font-size: 12.5px; }
+.ln { display: block; padding: 1px 12px 1px 0; white-space: pre; border-left: 3px solid transparent; }
+.ln b { display: inline-block; width: 30px; text-align: right; padding-right: 10px; color: var(--muted); font-weight: 400; }
+.ln.on { background: var(--code-hl); border-left-color: var(--read); }
+.ln .c { color: var(--muted); }
+.state { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0; font-size: 14px; }
+.state dt { color: var(--muted); }
+.state dd { margin: 0; font-weight: 600; }
+.k-write { color: var(--write); } .k-read { color: var(--read); }
+#placed { display: inline-block; padding: 0 8px; border-radius: 6px; }
+#placed.flash { animation: flash .7s ease-out; }
+@keyframes flash { 0% { background: var(--done); color: #fff; } 100% { background: transparent; } }
+
+.caption { margin-top: 14px; }
+.caption .phase { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+  color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; margin-right: 6px; }
+#cap { font-size: 16px; }
+#inv { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+.controls label { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; }
+#counter { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 14px; font-size: 13px; }
+.legend div { display: flex; align-items: center; gap: 6px; }
+.sw { width: 22px; height: 18px; border-radius: 5px; border: 2px solid var(--line); display: inline-grid; place-items: center; font-size: 10px; }
+.hint { color: var(--muted); font-size: 12px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>LC 283 · Move Zeroes</h1>
+    <span class="badge">Two pointers · read / write</span>
+    <span class="cx">O(n) time · O(1) extra space</span>
+  </header>
+
+  <details class="panel" open>
+    <summary>Why this pattern?</summary>
+    <ul>
+      <li><b>Signals:</b> "in-place" (no copy allowed), "keep the relative order", and "move some values to one end". Together they point to two pointers that move in the same direction: one reads, one writes.</li>
+      <li><b>Brute force:</b> build a new array of the non-zeros and then the zeros. That is O(n) time but needs O(n) extra space, which breaks the in-place rule. Doing it in place by shifting everything left each time you meet a 0 costs O(n²).</li>
+      <li><b>Pattern:</b> one pass, O(n) time, O(1) space. Each non-zero is swapped at most once.</li>
+      <li><b>Core idea:</b> <code>read</code> finds each non-zero, <code>write</code> marks the next free slot for it, and a swap sends the non-zero left and pushes a zero right.</li>
+    </ul>
+  </details>
+
+  <div class="examples" role="group" aria-label="Example input">
+    <span>Example:</span>
+    <button data-ex="custom" aria-pressed="true">Custom: [2,0,1,0,0,3,12,0,5]</button>
+    <button data-ex="lc1" aria-pressed="false">LeetCode Example 1: [0,1,0,3,12]</button>
+  </div>
+
+  <div class="main">
+    <div class="panel canvas" id="canvas"><div class="track" id="track"></div></div>
+    <div class="side">
+      <div class="panel" style="padding:10px">
+        <pre class="code" id="code"></pre>
+      </div>
+      <div class="panel">
+        <dl class="state">
+          <dt class="k-write">write</dt><dd id="s-write"></dd>
+          <dt class="k-read">read</dt><dd id="s-read"></dd>
+          <dt>nums[read]</dt><dd id="s-val"></dd>
+          <dt>Non-zeros placed</dt><dd><span id="placed"></span></dd>
+          <dt>nums</dt><dd class="mono" id="s-nums"></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel caption" aria-live="polite">
+    <div><span class="phase" id="phase"></span><span id="cap"></span></div>
+    <div id="inv"></div>
+  </div>
+
+  <div class="controls">
+    <button id="reset">⏮ Reset</button>
+    <button id="prev">◀ Prev</button>
+    <button id="play">▶ Play</button>
+    <button id="next">Next ▶</button>
+    <label>Speed <input id="speed" type="range" min="1" max="10" value="5"></label>
+    <span id="counter"></span>
+  </div>
+  <div class="hint">Keyboard: ← / → to step, Space to play or pause.</div>
+
+  <div class="panel legend" aria-label="Legend">
+    <div><span class="sw" style="border:0;color:var(--write);font-weight:700">▲</span>write pointer (next free slot)</div>
+    <div><span class="sw" style="border:0;color:var(--read);font-weight:700">▲</span>read pointer (scans every element)</div>
+    <div><span class="sw" style="background:var(--current);border-color:var(--current)"></span>element being checked</div>
+    <div><span class="sw" style="border-color:var(--swap);box-shadow:0 0 0 2px var(--swap)"></span>swap pair (with "swap" arc)</div>
+    <div><span class="sw" style="background:var(--done-bg);border-color:var(--done);color:var(--done)">✓</span>non-zero in its final place</div>
+    <div><span class="sw" style="background:var(--zero-bg);border:2px dashed var(--zero)"></span>zero (dashed)</div>
+    <div><span class="sw" style="background:var(--done-band);border:0"></span>placed zone [0, write)</div>
+    <div><span class="sw" style="background:var(--gap-band);border:0"></span>zero gap [write, read)</div>
+  </div>
+</div>
+
+<script>
+const DATA = {"custom":{"input":[2,0,1,0,0,3,12,0,5],"output":[2,1,3,12,5,0,0,0,0],"steps":[{"line":3,"phase":"init","state":{"arr":[2,0,1,0,0,3,12,0,5],"ids":[0,1,2,3,4,5,6,7,8],"pointers":{"write":0,"read":null},"placed":0},"highlight":{"roles":{}},"caption":"write = 0: the next non-zero we find goes into slot 0. Nothing has been placed yet.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":5,"phase":"compare","state":{"arr":[2,0,1,0,0,3,12,0,5],"ids":[0,1,2,3,4,5,6,7,8],"pointers":{"write":0,"read":0},"placed":0},"highlight":{"roles":{"0":"current"}},"caption":"nums[0] = 2 is not zero, so it belongs in the next free slot, write = 0.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":6,"phase":"swap","state":{"arr":[2,0,1,0,0,3,12,0,5],"ids":[0,1,2,3,4,5,6,7,8],"pointers":{"write":0,"read":0},"placed":0},"highlight":{"roles":{"0":"swap"}},"caption":"write and read both point at index 0, so the swap changes nothing: 2 is already in the right place.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":7,"phase":"advance","state":{"arr":[2,0,1,0,0,3,12,0,5],"ids":[0,1,2,3,4,5,6,7,8],"pointers":{"write":1,"read":0},"placed":1},"highlight":{"roles":{"0":"placed"}},"caption":"Slot 0 is filled, so write moves to 1. Non-zeros placed: 1.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":true},{"line":5,"phase":"skip","state":{"arr":[2,0,1,0,0,3,12,0,5],"ids":[0,1,2,3,4,5,6,7,8],"pointers":{"write":1,"read":1},"placed":1},"highlight":{"roles":{"1":"current"}},"caption":"nums[1] = 0. Skip it: write stays at 1, so this zero is waiting to be swapped out.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":5,"phase":"compare","state":{"arr":[2,0,1,0,0,3,12,0,5],"ids":[0,1,2,3,4,5,6,7,8],"pointers":{"write":1,"read":2},"placed":1},"highlight":{"roles":{"2":"current"}},"caption":"nums[2] = 1 is not zero, so it belongs in the next free slot, write = 1.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":6,"phase":"swap","state":{"arr":[2,1,0,0,0,3,12,0,5],"ids":[0,2,1,3,4,5,6,7,8],"pointers":{"write":1,"read":2},"placed":1},"highlight":{"roles":{"1":"swap","2":"swap"}},"caption":"Swap nums[1] = 0 with nums[2] = 1. The 1 moves left into slot 1; the 0 moves right to index 2. The order of the non-zeros does not change.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":7,"phase":"advance","state":{"arr":[2,1,0,0,0,3,12,0,5],"ids":[0,2,1,3,4,5,6,7,8],"pointers":{"write":2,"read":2},"placed":2},"highlight":{"roles":{"1":"placed"}},"caption":"Slot 1 is filled, so write moves to 2. Non-zeros placed: 2.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":true},{"line":5,"phase":"skip","state":{"arr":[2,1,0,0,0,3,12,0,5],"ids":[0,2,1,3,4,5,6,7,8],"pointers":{"write":2,"read":3},"placed":2},"highlight":{"roles":{"3":"current"}},"caption":"nums[3] = 0. Skip it: write stays at 2, so this zero is waiting to be swapped out.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":5,"phase":"skip","state":{"arr":[2,1,0,0,0,3,12,0,5],"ids":[0,2,1,3,4,5,6,7,8],"pointers":{"write":2,"read":4},"placed":2},"highlight":{"roles":{"4":"current"}},"caption":"nums[4] = 0. Skip it: write stays at 2, so this zero is waiting to be swapped out.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":5,"phase":"compare","state":{"arr":[2,1,0,0,0,3,12,0,5],"ids":[0,2,1,3,4,5,6,7,8],"pointers":{"write":2,"read":5},"placed":2},"highlight":{"roles":{"5":"current"}},"caption":"nums[5] = 3 is not zero, so it belongs in the next free slot, write = 2.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":6,"phase":"swap","state":{"arr":[2,1,3,0,0,0,12,0,5],"ids":[0,2,5,3,4,1,6,7,8],"pointers":{"write":2,"read":5},"placed":2},"highlight":{"roles":{"2":"swap","5":"swap"}},"caption":"Swap nums[2] = 0 with nums[5] = 3. The 3 moves left into slot 2; the 0 moves right to index 5. The order of the non-zeros does not change.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":7,"phase":"advance","state":{"arr":[2,1,3,0,0,0,12,0,5],"ids":[0,2,5,3,4,1,6,7,8],"pointers":{"write":3,"read":5},"placed":3},"highlight":{"roles":{"2":"placed"}},"caption":"Slot 2 is filled, so write moves to 3. Non-zeros placed: 3.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":true},{"line":5,"phase":"compare","state":{"arr":[2,1,3,0,0,0,12,0,5],"ids":[0,2,5,3,4,1,6,7,8],"pointers":{"write":3,"read":6},"placed":3},"highlight":{"roles":{"6":"current"}},"caption":"nums[6] = 12 is not zero, so it belongs in the next free slot, write = 3.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":6,"phase":"swap","state":{"arr":[2,1,3,12,0,0,0,0,5],"ids":[0,2,5,6,4,1,3,7,8],"pointers":{"write":3,"read":6},"placed":3},"highlight":{"roles":{"3":"swap","6":"swap"}},"caption":"Swap nums[3] = 0 with nums[6] = 12. The 12 moves left into slot 3; the 0 moves right to index 6. The order of the non-zeros does not change.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":7,"phase":"advance","state":{"arr":[2,1,3,12,0,0,0,0,5],"ids":[0,2,5,6,4,1,3,7,8],"pointers":{"write":4,"read":6},"placed":4},"highlight":{"roles":{"3":"placed"}},"caption":"Slot 3 is filled, so write moves to 4. Non-zeros placed: 4.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":true},{"line":5,"phase":"skip","state":{"arr":[2,1,3,12,0,0,0,0,5],"ids":[0,2,5,6,4,1,3,7,8],"pointers":{"write":4,"read":7},"placed":4},"highlight":{"roles":{"7":"current"}},"caption":"nums[7] = 0. Skip it: write stays at 4, so this zero is waiting to be swapped out.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":5,"phase":"compare","state":{"arr":[2,1,3,12,0,0,0,0,5],"ids":[0,2,5,6,4,1,3,7,8],"pointers":{"write":4,"read":8},"placed":4},"highlight":{"roles":{"8":"current"}},"caption":"nums[8] = 5 is not zero, so it belongs in the next free slot, write = 4.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":6,"phase":"swap","state":{"arr":[2,1,3,12,5,0,0,0,0],"ids":[0,2,5,6,8,1,3,7,4],"pointers":{"write":4,"read":8},"placed":4},"highlight":{"roles":{"4":"swap","8":"swap"}},"caption":"Swap nums[4] = 0 with nums[8] = 5. The 5 moves left into slot 4; the 0 moves right to index 8. The order of the non-zeros does not change.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":7,"phase":"advance","state":{"arr":[2,1,3,12,5,0,0,0,0],"ids":[0,2,5,6,8,1,3,7,4],"pointers":{"write":5,"read":8},"placed":5},"highlight":{"roles":{"4":"placed"}},"caption":"Slot 4 is filled, so write moves to 5. Non-zeros placed: 5.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":true},{"line":8,"phase":"return","state":{"arr":[2,1,3,12,5,0,0,0,0],"ids":[0,2,5,6,8,1,3,7,4],"pointers":{"write":5,"read":null},"placed":5},"highlight":{"roles":{}},"caption":"Done: [2, 1, 3, 12, 5, 0, 0, 0, 0]. Every non-zero was swapped into slots 0..4 in the order read met it, so the order is kept, and the 4 zeros are left at the end. One pass, no extra array.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false}]},"lc1":{"input":[0,1,0,3,12],"output":[1,3,12,0,0],"steps":[{"line":3,"phase":"init","state":{"arr":[0,1,0,3,12],"ids":[0,1,2,3,4],"pointers":{"write":0,"read":null},"placed":0},"highlight":{"roles":{}},"caption":"write = 0: the next non-zero we find goes into slot 0. Nothing has been placed yet.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":5,"phase":"skip","state":{"arr":[0,1,0,3,12],"ids":[0,1,2,3,4],"pointers":{"write":0,"read":0},"placed":0},"highlight":{"roles":{"0":"current"}},"caption":"nums[0] = 0. Skip it: write stays at 0, so this zero is waiting to be swapped out.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":5,"phase":"compare","state":{"arr":[0,1,0,3,12],"ids":[0,1,2,3,4],"pointers":{"write":0,"read":1},"placed":0},"highlight":{"roles":{"1":"current"}},"caption":"nums[1] = 1 is not zero, so it belongs in the next free slot, write = 0.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":6,"phase":"swap","state":{"arr":[1,0,0,3,12],"ids":[1,0,2,3,4],"pointers":{"write":0,"read":1},"placed":0},"highlight":{"roles":{"0":"swap","1":"swap"}},"caption":"Swap nums[0] = 0 with nums[1] = 1. The 1 moves left into slot 0; the 0 moves right to index 1. The order of the non-zeros does not change.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":7,"phase":"advance","state":{"arr":[1,0,0,3,12],"ids":[1,0,2,3,4],"pointers":{"write":1,"read":1},"placed":1},"highlight":{"roles":{"0":"placed"}},"caption":"Slot 0 is filled, so write moves to 1. Non-zeros placed: 1.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":true},{"line":5,"phase":"skip","state":{"arr":[1,0,0,3,12],"ids":[1,0,2,3,4],"pointers":{"write":1,"read":2},"placed":1},"highlight":{"roles":{"2":"current"}},"caption":"nums[2] = 0. Skip it: write stays at 1, so this zero is waiting to be swapped out.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":5,"phase":"compare","state":{"arr":[1,0,0,3,12],"ids":[1,0,2,3,4],"pointers":{"write":1,"read":3},"placed":1},"highlight":{"roles":{"3":"current"}},"caption":"nums[3] = 3 is not zero, so it belongs in the next free slot, write = 1.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":6,"phase":"swap","state":{"arr":[1,3,0,0,12],"ids":[1,3,2,0,4],"pointers":{"write":1,"read":3},"placed":1},"highlight":{"roles":{"1":"swap","3":"swap"}},"caption":"Swap nums[1] = 0 with nums[3] = 3. The 3 moves left into slot 1; the 0 moves right to index 3. The order of the non-zeros does not change.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":7,"phase":"advance","state":{"arr":[1,3,0,0,12],"ids":[1,3,2,0,4],"pointers":{"write":2,"read":3},"placed":2},"highlight":{"roles":{"1":"placed"}},"caption":"Slot 1 is filled, so write moves to 2. Non-zeros placed: 2.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":true},{"line":5,"phase":"compare","state":{"arr":[1,3,0,0,12],"ids":[1,3,2,0,4],"pointers":{"write":2,"read":4},"placed":2},"highlight":{"roles":{"4":"current"}},"caption":"nums[4] = 12 is not zero, so it belongs in the next free slot, write = 2.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":6,"phase":"swap","state":{"arr":[1,3,12,0,0],"ids":[1,3,4,0,2],"pointers":{"write":2,"read":4},"placed":2},"highlight":{"roles":{"2":"swap","4":"swap"}},"caption":"Swap nums[2] = 0 with nums[4] = 12. The 12 moves left into slot 2; the 0 moves right to index 4. The order of the non-zeros does not change.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false},{"line":7,"phase":"advance","state":{"arr":[1,3,12,0,0],"ids":[1,3,4,0,2],"pointers":{"write":3,"read":4},"placed":3},"highlight":{"roles":{"2":"placed"}},"caption":"Slot 2 is filled, so write moves to 3. Non-zeros placed: 3.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":true},{"line":8,"phase":"return","state":{"arr":[1,3,12,0,0],"ids":[1,3,4,0,2],"pointers":{"write":3,"read":null},"placed":3},"highlight":{"roles":{}},"caption":"Done: [1, 3, 12, 0, 0]. Every non-zero was swapped into slots 0..2 in the order read met it, so the order is kept, and the 2 zeros are left at the end. One pass, no extra array.","invariant":"Left of write: only non-zeros, in their original order. From write up to read: only zeros.","flash":false}]}};
+const CODE = [
+  ["class Solution:", ""],
+  ["    def moveZeroes(self, nums: List[int]) -> None:", ""],
+  ["        write = 0", "# next free slot for a non-zero"],
+  ["        for read in range(len(nums)):", "# read visits every element once"],
+  ["            if nums[read] != 0:", "# found a non-zero"],
+  ["                nums[write], nums[read] = nums[read], nums[write]", "# send it left"],
+  ["                write += 1", "# slot filled, move on"],
+  ["        # loop ends: every zero now sits after the last non-zero", ""],
+];
+const PHASE = { init: "start", compare: "compare", skip: "skip zero", swap: "swap", advance: "write++", return: "done" };
+
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+$("code").innerHTML = CODE.map(([src, c], i) =>
+  `<span class="ln" data-line="${i + 1}"><b>${i + 1}</b>${esc(src)}${c ? "  <span class=\"c\">" + esc(c) + "</span>" : ""}</span>`
+).join("");
+
+let ex = "custom", steps = DATA[ex].steps, cur = 0, timer = null, pitch = 50, nodes = {};
+
+function build() {
+  const n = DATA[ex].input.length, track = $("track");
+  const avail = $("canvas").clientWidth - 34;
+  pitch = Math.max(30, Math.min(60, Math.floor(avail / n)));
+  const size = pitch - 6;
+  track.style.width = n * pitch + "px";
+  track.classList.toggle("small", pitch < 44);
+  track.style.height = 40 + size + 62 + "px";
+  track.style.fontSize = Math.max(13, Math.min(18, size * 0.38)) + "px";
+  let html = `<div class="zone done" id="zdone"></div><div class="zone gap" id="zgap"></div>
+    <div class="zonelbl" id="ldone">placed</div><div class="zonelbl" id="lgap">zeros</div>
+    <div class="arc" id="arc"><span>swap</span></div>`;
+  for (let i = 0; i < n; i++)
+    html += `<div class="idx" style="left:${i * pitch}px;width:${pitch}px;top:${44 + size}px">${i}</div>`;
+  DATA[ex].input.forEach((v, id) =>
+    html += `<div class="cell" id="c${id}" style="width:${size}px;height:${size}px;left:3px">${v}</div>`);
+  html += `<div class="ptr write" id="pw" style="width:${pitch}px;top:${62 + size}px">▲<br>write</div>
+           <div class="ptr read" id="pr" style="width:${pitch}px;top:${88 + size}px">▲<br>read</div>`;
+  track.innerHTML = html;
+  track.querySelectorAll(".zone").forEach(z => z.style.height = size + 12 + "px");
+  nodes = {};
+  DATA[ex].input.forEach((_, id) => nodes[id] = $("c" + id));
+  // place cells before first paint so they don't slide in from index 0
+  steps[cur].state.ids.forEach((id, pos) => nodes[id].style.transform = `translateX(${pos * pitch}px)`);
+}
+
+function render(flash) {
+  const s = steps[cur], st = s.state, n = st.arr.length;
+  const w = st.pointers.write, r = st.pointers.read, last = s.phase === "return";
+  // zones: [0, write) is placed; [write, read) holds zeros (at the end: [write, n))
+  const gapEnd = last ? n : (r === null ? w : r);
+  const swapping = s.phase === "swap" && w !== r;
+  const g0 = swapping ? w + 1 : w;   // during a swap, slot write already holds the non-zero
+  const zd = $("zdone"), zg = $("zgap");
+  zd.style.left = "0px"; zd.style.width = w * pitch + "px"; zd.style.opacity = w ? 1 : 0;
+  zg.style.left = g0 * pitch + "px"; zg.style.width = Math.max(0, gapEnd - g0) * pitch + "px";
+  zg.style.opacity = gapEnd > g0 ? 1 : 0;
+  $("ldone").style.left = w * pitch / 2 + "px"; $("ldone").style.opacity = w ? 1 : 0;
+  $("lgap").style.left = (g0 + gapEnd) * pitch / 2 + "px"; $("lgap").style.opacity = gapEnd > g0 && !swapping ? 1 : 0;
+  // swap arc between the two swapped slots
+  const arc = $("arc");
+  if (swapping) {
+    arc.style.left = (w + 0.5) * pitch + "px"; arc.style.width = (r - w) * pitch + "px"; arc.style.opacity = 1;
+  } else arc.style.opacity = 0;
+  // cells, moved by identity so swaps slide
+  st.ids.forEach((id, pos) => {
+    const el = nodes[id], v = st.arr[pos], role = s.highlight.roles[pos];
+    el.style.transform = `translateX(${pos * pitch}px)`;
+    el.className = "cell" + (v === 0 ? " zero" : "") + (v !== 0 && pos < w ? " done" : "") +
+      (role === "current" ? " current" : "") + (role === "swap" ? " swap" : "");
+  });
+  // pointers
+  $("pw").style.left = Math.min(w, n - 1) * pitch + "px";
+  $("pw").style.opacity = w < n ? 1 : 0.35;
+  $("pr").style.left = (r === null ? 0 : r) * pitch + "px";
+  $("pr").style.opacity = r === null ? 0 : 1;
+  // code + state
+  document.querySelectorAll(".ln").forEach(l => l.classList.toggle("on", +l.dataset.line === s.line));
+  $("s-write").textContent = w;
+  $("s-read").textContent = r === null ? "—" : r;
+  $("s-val").textContent = r === null ? "—" : st.arr[r];
+  const p = $("placed");
+  p.textContent = st.placed;
+  p.classList.remove("flash");
+  if (flash && s.flash) { void p.offsetWidth; p.classList.add("flash"); }
+  $("s-nums").textContent = "[" + st.arr.join(", ") + "]";
+  $("phase").textContent = PHASE[s.phase];
+  $("cap").textContent = s.caption;
+  $("inv").textContent = "Invariant: " + s.invariant;
+  $("counter").textContent = `Step ${cur + 1} / ${steps.length}`;
+  $("prev").disabled = cur === 0;
+  $("next").disabled = cur === steps.length - 1;
+}
+
+function go(i, flash) { cur = Math.max(0, Math.min(steps.length - 1, i)); render(flash); }
+function delay() { return 2200 - $("speed").value * 200; }
+function stop() { clearTimeout(timer); timer = null; $("play").textContent = "▶ Play"; }
+function tick() {
+  if (cur >= steps.length - 1) return stop();
+  go(cur + 1, true);
+  timer = setTimeout(tick, delay());
+}
+function toggle() {
+  if (timer) return stop();
+  if (cur >= steps.length - 1) go(0);
+  $("play").textContent = "⏸ Pause";
+  timer = setTimeout(tick, Math.min(400, delay()));
+}
+function load(name) {
+  stop(); ex = name; steps = DATA[ex].steps; cur = 0;
+  document.querySelectorAll("[data-ex]").forEach(b => b.setAttribute("aria-pressed", b.dataset.ex === ex));
+  build(); render(false);
+}
+
+$("reset").onclick = () => { stop(); go(0); };
+$("prev").onclick = () => { stop(); go(cur - 1); };
+$("next").onclick = () => { stop(); go(cur + 1, true); };
+$("play").onclick = toggle;
+document.querySelectorAll("button").forEach(b => b.addEventListener("click", () => b.blur()));
+document.querySelectorAll("[data-ex]").forEach(b => b.addEventListener("click", () => load(b.dataset.ex)));
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  if (e.key === "ArrowRight") { stop(); go(cur + 1, true); }
+  else if (e.key === "ArrowLeft") { stop(); go(cur - 1); }
+  else if (e.key === " ") { e.preventDefault(); toggle(); }
+});
+let rt; window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { build(); render(false); }, 120); });
+load("custom");
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "title": "Length of Longest Subarray With at Most K Frequency",
+  "source": { "site": "LeetCode", "id": "2958", "url": "https://leetcode.com/problems/length-of-longest-subarray-with-at-most-k-frequency/" },
+  "difficulty": "Medium",
+  "nMax": 100000,
+  "signature": {
+    "python": "maxSubarrayLength",
+    "cpp": "maxSubarrayLength",
+    "c": "maxSubarrayLength",
+    "params": [{ "name": "nums", "type": "int[]" }, { "name": "k", "type": "int" }],
+    "returns": "int"
+  },
+  "constraints": [
+    {
+      "text": "1 ≤ nums.length ≤ 10⁵",
+      "meaning": "Up to 100,000 elements, never empty.",
+      "impact": "O(n²) is about 10¹⁰ steps: far too slow. You need O(n) or O(n log n)."
+    },
+    {
+      "text": "1 ≤ nums[i] ≤ 10⁹",
+      "meaning": "Values are positive but can be very large.",
+      "impact": "A counting array of size 10⁹ is impossible, so the counts go in a hash map. This is also why there is no C version."
+    },
+    {
+      "text": "1 ≤ k ≤ nums.length",
+      "meaning": "k is at least 1, so any single element is a good subarray on its own.",
+      "impact": "The answer is always at least 1. No special case for 'no good subarray'."
+    },
+    {
+      "text": "A subarray is contiguous (statement)",
+      "meaning": "The elements must sit next to each other.",
+      "impact": "Contiguous + longest + a rule that every window must follow → sliding window."
+    }
+  ],
+  "bruteForce": {
+    "summary": "try every start i, extend j to the right with a fresh count map until some value goes over k. O(n²) time, which is too slow for n = 10⁵.",
+    "opsUnit": "element visits"
+  },
+  "examples": [
+    { "id": "lc1", "label": "LeetCode Example 1: [1,2,3,1,2,3,1,2], k = 2", "kind": "main", "args": { "nums": [1, 2, 3, 1, 2, 3, 1, 2], "k": 2 }, "expected": 6 },
+    { "id": "longer-shrink", "label": "Longer shrink: [3,1,2,1,3,1,2,2], k = 2", "kind": "main", "args": { "nums": [3, 1, 2, 1, 3, 1, 2, 2], "k": 2 } },
+    { "id": "lc2", "label": "LeetCode Example 2: k = 1", "kind": "edge", "args": { "nums": [1, 2, 1, 2, 1, 2, 1, 2], "k": 1 }, "expected": 2 },
+    { "id": "lc3", "label": "LeetCode Example 3: all the same", "kind": "edge", "args": { "nums": [5, 5, 5, 5, 5, 5, 5], "k": 4 }, "expected": 4 },
+    { "id": "all-distinct", "label": "All distinct, k = 1", "kind": "edge", "args": { "nums": [4, 1, 3, 2], "k": 1 } }
+  ]
+}

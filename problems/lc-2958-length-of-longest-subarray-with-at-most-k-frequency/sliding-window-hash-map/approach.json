@@ -1,0 +1,30 @@
+{
+  "order": 1,
+  "name": "Sliding window + hash map",
+  "pattern": "Sliding window",
+  "ds": ["Hash map"],
+  "time": "O(n)",
+  "space": "O(n)",
+  "whenToUse": "Always for this problem: values are too large for a counting array.",
+  "noC": "values go up to 10⁹, so the counts need a hash map, and C has no hash map in its standard library.",
+  "card": {
+    "signals": "\"longest subarray\" (contiguous, longest) plus a rule that every window must follow (\"each value at most k times\"). If a window breaks the rule, any bigger window that contains it breaks it too, so you can grow on the right and shrink on the left.",
+    "pattern": "a variable-size window. Each index enters the window once (right) and leaves at most once (left), so the whole scan is O(n). The count map holds at most n keys: O(n) space.",
+    "coreIdea": "add nums[right]; only nums[right] can have gone over k, so move left to the right until count[nums[right]] ≤ k, then record the window length."
+  },
+  "invariant": "After each shrink loop, the window nums[left..right] is good: every value in it appears at most k times.",
+  "phases": { "init": "start", "expand": "expand", "shrink": "shrink", "update": "best ↑", "compare": "compare", "return": "done", "next": "next round", "check": "while" },
+  "legend": [
+    { "swatch": "ptr-back", "text": "left: left edge of the window" },
+    { "swatch": "ptr-front", "text": "right: right edge (new element)" },
+    { "swatch": "band-window", "text": "current window [left, right]" },
+    { "swatch": "current", "text": "element just added" },
+    { "swatch": "conflict", "text": "added element that breaks the rule" },
+    { "swatch": "dup", "text": "other copies of the over-limit value" },
+    { "swatch": "removed", "text": "element being dropped" },
+    { "swatch": "out", "text": "left the window for good" },
+    { "swatch": "bar", "text": "best window so far (cells turn green at the end)" },
+    { "swatch": "slot", "text": "count slot used (dashed red = over k)" }
+  ],
+  "accepted": []
+}

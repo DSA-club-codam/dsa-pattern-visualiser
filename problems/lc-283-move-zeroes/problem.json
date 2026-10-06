@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "title": "Move Zeroes",
+  "source": { "site": "LeetCode", "id": "283", "url": "https://leetcode.com/problems/move-zeroes/" },
+  "difficulty": "Easy",
+  "nMax": 10000,
+  "signature": {
+    "python": "moveZeroes",
+    "cpp": "moveZeroes",
+    "c": "moveZeroes",
+    "params": [{ "name": "nums", "type": "int[]" }],
+    "returns": "void",
+    "inPlace": "nums"
+  },
+  "constraints": [
+    {
+      "text": "1 ≤ nums.length ≤ 10⁴",
+      "meaning": "The array is never empty and has at most 10,000 elements.",
+      "impact": "O(n²) is about 10⁸ steps: slow and risky. One pass, O(n), is the safe target. No empty-array check is needed, but the code still works for n = 0."
+    },
+    {
+      "text": "−2³¹ ≤ nums[i] ≤ 2³¹ − 1",
+      "meaning": "Any 32-bit integer, negatives included.",
+      "impact": "Values fit in int in C and C++. Only 0 is special: negative numbers are non-zero and must keep their order too."
+    },
+    {
+      "text": "Do it in place (statement)",
+      "meaning": "You may not build a second array.",
+      "impact": "O(1) extra space. This rules out 'copy the non-zeros, then pad with zeros' and points to two pointers inside one array."
+    },
+    {
+      "text": "Keep the relative order of the non-zero elements (statement)",
+      "meaning": "1, 3, 12 must stay 1, 3, 12.",
+      "impact": "Swapping from both ends would break the order, so both pointers must move in the same direction."
+    }
+  ],
+  "bruteForce": {
+    "summary": "move each non-zero left past the zeros, like bubble sort: O(n²) time, O(1) space. Copying the non-zeros into a new array is O(n) time, but it needs O(n) extra space, which breaks the in-place rule.",
+    "opsUnit": "element checks"
+  },
+  "examples": [
+    { "id": "mixed", "label": "Mixed: [2,0,1,0,0,3,12,0,5]", "kind": "main", "args": { "nums": [2, 0, 1, 0, 0, 3, 12, 0, 5] } },
+    { "id": "lc1", "label": "LeetCode Example 1: [0,1,0,3,12]", "kind": "main", "args": { "nums": [0, 1, 0, 3, 12] }, "expected": [1, 3, 12, 0, 0] },
+    { "id": "lc2", "label": "LeetCode Example 2: [0]", "kind": "edge", "args": { "nums": [0] }, "expected": [0] },
+    { "id": "no-zeros", "label": "No zeros: [4,-1,7]", "kind": "edge", "args": { "nums": [4, -1, 7] } },
+    { "id": "all-zeros", "label": "All zeros: [0,0,0]", "kind": "edge", "args": { "nums": [0, 0, 0] } }
+  ]
+}

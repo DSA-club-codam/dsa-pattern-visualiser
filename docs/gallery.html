@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design Gallery</title>
+<meta name="description" content="Every element of the visualiser design system, live.">
+<link rel="stylesheet" href="core/tokens.css">
+<link rel="stylesheet" href="core/viz.css">
+</head>
+<body>
+<!-- Source: core/gallery.html (copied by build.py). Everything here is drawn by core/viz.js, so it always matches the real pages. -->
+<div class="wrap">
+  <header class="vz-header"><h1>Design gallery</h1></header>
+  <p class="note">Every building block of the visualiser, drawn live by the shared engine. If a new problem needs something that is not on this page, it is proposed first, then added here, and only then used.</p>
+  <div class="vz-meta">
+    <a href="index.html">All visualisations</a>
+    <span class="lbl note">Theme:</span>
+    <button data-theme-btn="auto" aria-pressed="true">Auto</button>
+    <button data-theme-btn="light" aria-pressed="false">Light</button>
+    <button data-theme-btn="dark" aria-pressed="false">Dark</button>
+  </div>
+
+  <section class="gl-section"><h2>Colour roles</h2>
+    <p>One colour means one thing on every page. Meaning is never carried by colour alone: there is always a label, a shape or a line style too.</p>
+    <div class="gl-swatches" id="gl-roles"></div></section>
+
+  <section class="gl-section"><h2>Surface colours</h2><div class="gl-swatches" id="gl-surface"></div></section>
+
+  <section class="gl-section"><h2>Array cells</h2>
+    <p>Every state a cell can have. The index sits under every cell.</p>
+    <div class="panel vz-canvas" id="gl-cells"></div></section>
+
+  <section class="gl-section"><h2>Pointers, ranges and marks</h2>
+    <p>Pointer names follow the pattern: left / right (towards each other, and window edges), slow / fast (same direction, linked lists), lo / mid / hi (binary search). The trailing pointer is always blue, the leading one orange.</p>
+    <div class="panel vz-canvas" id="gl-window"></div>
+    <div class="panel vz-canvas" id="gl-zones" style="margin-top:14px"></div>
+    <div class="panel vz-canvas" id="gl-bs" style="margin-top:14px"></div></section>
+
+  <section class="gl-section"><h2>Side panels</h2>
+    <p>Only the panels a pattern needs are shown. Click "Flash" to see how a new best value is announced.</p>
+    <div class="gl-grid">
+      <div class="panel"><h3>Variables</h3><div id="gl-vars"></div><button id="gl-flash" style="margin-top:10px">Flash</button></div>
+      <div class="panel" id="gl-count"></div>
+      <div class="panel" id="gl-kv"></div>
+      <div class="panel" id="gl-stack"></div>
+      <div class="panel" id="gl-queue"></div>
+    </div></section>
+
+  <section class="gl-section"><h2>Caption and controls</h2>
+    <div class="panel vz-caption"><div><span class="phase">shrink</span><span class="vz-cap">Drop nums[0] = 1, left moves to 1. count[1] = 2 ≤ k, so the window [1, 6] is good again.</span></div>
+      <div class="vz-inv">Invariant: the window nums[left..right] is good: every value in it appears at most k times.</div></div>
+    <div class="vz-controls"><button>⏮ Reset</button><button>◀ Prev</button><button>▶ Play</button><button>Next ▶</button>
+      <label>Speed <input type="range" min="1" max="10" value="5"></label><span class="vz-counter">Step 15 / 21</span></div></section>
+
+  <section class="gl-section"><h2>Legend swatches</h2>
+    <p>The name next to each swatch is what approach.json uses in "legend".</p>
+    <div class="panel vz-legend" id="gl-legend"></div></section>
+
+  <section class="gl-section"><h2>Code drawer</h2>
+    <details class="panel" open><summary>Show code</summary>
+      <div class="vz-tabs"><button aria-selected="true">Python3<span class="acc">✓</span></button><button aria-selected="false">C++17</button><button aria-selected="false">C</button></div>
+      <div id="gl-code"></div><p class="note">✓ = accepted on LeetCode in that language.</p></details></section>
+
+  <footer class="vz-footer"><a href="index.html">All visualisations</a></footer>
+</div>
+<script src="core/viz.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const ROLES = [
+    ["--role-back", "Trailing pointer", "left, slow, lo"],
+    ["--role-front", "Leading pointer", "right, fast, hi"],
+    ["--role-mid", "Computed position", "mid (proposal, not used yet)"],
+    ["--role-current", "Examined now", "the element being checked"],
+    ["--role-swap", "Swap", "two elements changing places"],
+    ["--role-conflict", "Rule broken", "duplicate over the limit, invalid state"],
+    ["--role-best", "Answer", "best so far, final place, result"],
+    ["--role-new", "Just added", "push, insert, enqueue (proposal)"],
+    ["--role-gone", "Dropped", "left the window, discarded"],
+    ["--zero", "Empty value", "the 0s in Move Zeroes"],
+    ["--slot-fill", "Count", "one occurrence in a count map"],
+    ["--band-window", "Window band", "the active range"],
+    ["--band-best", "Answer band", "placed / best range"],
+    ["--band-gap", "Gap band", "a range that holds only 'empty' values"],
+  ];
+  const SURF = [["--bg", "Page"], ["--panel", "Panel"], ["--ink", "Text"], ["--muted", "Muted text"], ["--line", "Lines"], ["--code-bg", "Code"], ["--code-hl", "Highlighted code line"]];
+  const sw = (list, host) => {
+    host.innerHTML = list.map(([t, name, use]) => `<div class="gl-swatch"><span class="gl-chip" style="background:var(${t})"></span><div><b>${name}</b><br><code>${t}</code>${use ? `<br><span class="note">${use}</span>` : ""}</div></div>`).join("");
+  };
+
+  function draw() {
+    sw(ROLES, $("gl-roles"));
+    sw(SURF, $("gl-surface"));
+
+    const states = ["", "current", "swap", "conflict", "dup", "done", "best", "new", "zero", "removed", "out"];
+    const vals = [7, 4, 9, 2, 2, 5, 6, 8, 0, 3, 1];
+    const r1 = new VIZ.ArrayRow($("gl-cells"), vals, { roles: [] });
+    const cls = {}, tags = { 3: ">k" };
+    states.forEach((s, i) => (cls[i] = s));
+    r1.update({ arr: vals, cls, tags });
+    const cap = document.createElement("p");
+    cap.className = "note";
+    cap.textContent = "Left to right: plain · current · swap · conflict (with badge) · dup · done (✓) · best · new · zero · removed · out";
+    $("gl-cells").append(cap);
+
+    const w = [1, 2, 3, 1, 2, 3, 1, 2];
+    const r2 = new VIZ.ArrayRow($("gl-window"), w, { roles: ["back", "front"], bar: true });
+    r2.update({ arr: w, cls: { 0: "removed", 5: "current" }, bands: [{ kind: "window", from: 1, to: 5, label: "window [1, 5] · length 5" }],
+      pointers: [{ role: "back", label: "left", at: 1 }, { role: "front", label: "right", at: 5 }], bar: { from: 0, to: 5, label: "best window [0, 5] · length 6" } });
+
+    const z = [2, 1, 0, 0, 3, 0, 5];
+    const r3 = new VIZ.ArrayRow($("gl-zones"), z, { roles: ["back", "front"] });
+    r3.update({ arr: z, cls: { 0: "done", 1: "done", 2: "zero swap", 3: "zero", 4: "swap", 5: "zero" },
+      bands: [{ kind: "best", from: 0, to: 1, label: "" }, { kind: "gap", from: 3, to: 3, label: "" }],
+      arc: { from: 2, to: 4, label: "swap" }, pointers: [{ role: "back", label: "slow", at: 2 }, { role: "front", label: "fast", at: 4 }] });
+
+    const b = [1, 3, 5, 7, 9, 11, 13, 15, 17];
+    const r4 = new VIZ.ArrayRow($("gl-bs"), b, { roles: ["back", "front", "mid"] });
+    r4.update({ arr: b, cls: { 0: "out", 1: "out", 2: "out", 3: "out", 6: "current" }, bands: [{ kind: "window", from: 4, to: 8, label: "search range [4, 8]" }],
+      pointers: [{ role: "back", label: "lo", at: 4 }, { role: "front", label: "hi", at: 8 }, { role: "mid", label: "mid", at: 6 }] });
+
+    const vars = [{ label: "left", value: 1, role: "back" }, { label: "right", value: 5, role: "front" }, { label: "window length", value: 5 }, { label: "best", value: 6, flash: true }];
+    VIZ.vars($("gl-vars"), vars, false);
+    $("gl-flash").onclick = () => VIZ.vars($("gl-vars"), vars, true);
+    VIZ.countMap($("gl-count"), [{ key: 1, count: 2 }, { key: 2, count: 3 }, { key: 3, count: 1 }], 2, "Count map <small>(limit k = 2)</small>");
+    VIZ.kvMap($("gl-kv"), [{ key: 2, value: 0 }, { key: 7, value: 1, mark: "hit" }, { key: 11, value: 2, mark: "new" }], "Hash map <small>(value → index)</small>");
+    VIZ.stack($("gl-stack"), [{ value: 9 }, { value: 6 }, { value: 4, mark: "new" }], "Stack");
+    VIZ.queue($("gl-queue"), [{ value: "A", mark: "gone" }, { value: "B" }, { value: "C" }, { value: "D", mark: "new" }], "Queue");
+
+    VIZ.legend($("gl-legend"), ["ptr-back", "ptr-front", "ptr-mid", "current", "swap", "conflict", "dup", "done", "best", "new", "zero", "removed", "out",
+      "band-window", "band-best", "band-gap", "bar", "slot", "slot-over"].map((s) => ({ swatch: s, text: s })));
+
+    const pre = VIZ.codeBlock([
+      { src: "for right in range(len(nums)):", comment: "# right edge, moves every step" },
+      { src: "    count[nums[right]] += 1", comment: "# add nums[right] to the window" },
+      { src: "    while count[nums[right]] > k:", comment: "" },
+      { src: "        count[nums[left]] -= 1", comment: "# drop nums[left]" },
+      { src: "        left += 1", comment: "" },
+    ]);
+    pre.querySelectorAll(".ln")[3].classList.add("on");
+    $("gl-code").innerHTML = "";
+    $("gl-code").append(pre);
+  }
+
+  document.querySelectorAll("[data-theme-btn]").forEach((btn) => btn.addEventListener("click", () => {
+    const t = btn.dataset.themeBtn;
+    if (t === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", t);
+    document.querySelectorAll("[data-theme-btn]").forEach((x) => x.setAttribute("aria-pressed", x === btn));
+  }));
+  draw();
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(draw, 120); });
+})();
+</script>
+</body>
+</html>

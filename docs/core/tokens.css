@@ -1,0 +1,108 @@
+/* =====================================================================
+   tokens.css — the ONLY place where colour and size values live.
+   Meaning of every token: .claude/skills/leetcode-pattern-visualizer/design-system.md
+   Live preview: docs/gallery.html
+   Values extracted from the first two pages (LC 283, LC 2958), Oct 2026.
+   Tokens marked (default) were not in those pages and are proposals.
+   ===================================================================== */
+
+:root {
+  /* ---- surface ---- */
+  --bg: #f7f7f5;
+  --panel: #ffffff;
+  --ink: #1d1d1f;
+  --muted: #6b6b70;
+  --line: #dcdcd8;
+  --code-bg: #f1f1ee;
+  --code-hl: #fff2b8;
+  --badge-ink: #ffffff;
+
+  /* ---- roles: pointers ---- */
+  --role-back: #2563eb;      /* left, slow, lo — the pointer that trails */
+  --role-front: #ea7a0c;     /* right, fast, hi — the pointer that leads */
+  --role-mid: #c026d3;       /* mid (default) */
+
+  /* ---- roles: elements ---- */
+  --role-current: #fcd34d;   /* element being examined now */
+  --current-ink: #3b2f00;
+  --role-swap: #7c3aed;      /* two elements changing places */
+  --role-conflict: #dc2626;  /* rule broken */
+  --conflict-bg: #fee2e2;
+  --role-best: #16a34a;      /* part of the answer / final place / best so far */
+  --best-bg: #dcfce7;
+  --role-new: #0d9488;       /* just pushed / inserted (default) */
+  --new-bg: #ccfbf1;         /* (default) */
+  --role-gone: #b4b4ba;      /* dropped / discarded */
+  --zero: #9a9aa0;           /* "empty" value such as 0 in Move Zeroes */
+  --zero-bg: #ececea;
+
+  /* ---- bands (ranges drawn behind cells) ---- */
+  --band-window: rgba(37, 99, 235, .10);
+  --band-window-edge: rgba(37, 99, 235, .55);
+  --band-best: rgba(22, 163, 74, .12);
+  --band-gap: rgba(120, 120, 130, .13);
+
+  /* ---- count map ---- */
+  --slot-fill: #93b4f5;
+
+  /* ---- type ---- */
+  --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --fs-body: 15px;
+  --fs-title: 22px;
+  --fs-caption: 16px;
+  --fs-small: 13px;
+  --fs-tiny: 12px;
+  --fs-code: 12.5px;
+
+  /* ---- shape and space ---- */
+  --radius-panel: 10px;
+  --radius-cell: 8px;
+  --gap: 14px;
+  --page-max: 1080px;
+
+  /* ---- array row geometry (px numbers read by viz.js) ---- */
+  --cell-pitch-min: 30;
+  --cell-pitch-max: 60;
+
+  /* ---- motion ---- */
+  --t-move: .35s;
+  --t-colour: .25s;
+  --t-flash: .7s;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141416; --panel: #1d1d20; --ink: #ececef; --muted: #9c9ca4; --line: #34343a;
+    --code-bg: #18181b; --code-hl: #4a3f12; --badge-ink: #0b1220;
+    --role-back: #60a5fa; --role-front: #fb923c; --role-mid: #e879f9;
+    --role-current: #facc15; --current-ink: #2a2100;
+    --role-swap: #a78bfa;
+    --role-conflict: #f87171; --conflict-bg: #3f1a1a;
+    --role-best: #4ade80; --best-bg: #14361f;
+    --role-new: #2dd4bf; --new-bg: #0f3b36;
+    --role-gone: #55555c; --zero: #7c7c84; --zero-bg: #26262b;
+    --band-window: rgba(96, 165, 250, .13); --band-window-edge: rgba(96, 165, 250, .6);
+    --band-best: rgba(74, 222, 128, .12); --band-gap: rgba(160, 160, 170, .12);
+    --slot-fill: #3b5f9e;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #141416; --panel: #1d1d20; --ink: #ececef; --muted: #9c9ca4; --line: #34343a;
+  --code-bg: #18181b; --code-hl: #4a3f12; --badge-ink: #0b1220;
+  --role-back: #60a5fa; --role-front: #fb923c; --role-mid: #e879f9;
+  --role-current: #facc15; --current-ink: #2a2100;
+  --role-swap: #a78bfa;
+  --role-conflict: #f87171; --conflict-bg: #3f1a1a;
+  --role-best: #4ade80; --best-bg: #14361f;
+  --role-new: #2dd4bf; --new-bg: #0f3b36;
+  --role-gone: #55555c; --zero: #7c7c84; --zero-bg: #26262b;
+  --band-window: rgba(96, 165, 250, .13); --band-window-edge: rgba(96, 165, 250, .6);
+  --band-best: rgba(74, 222, 128, .12); --band-gap: rgba(160, 160, 170, .12);
+  --slot-fill: #3b5f9e;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-move: 0s; --t-colour: 0s; --t-flash: 0s; }
+}

@@ -1,0 +1,5 @@
+[
+  { "name": "extreme values", "args": { "nums": [-2147483648, 0, 2147483647, 0] }, "expected": [-2147483648, 2147483647, 0, 0] },
+  { "name": "zero at the end only", "args": { "nums": [1, 2, 0] }, "expected": [1, 2, 0] },
+  { "name": "single non-zero", "args": { "nums": [5] }, "expected": [5] }
+]
