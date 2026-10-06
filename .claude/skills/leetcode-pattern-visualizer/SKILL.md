@@ -25,6 +25,7 @@ Audience: Codam DSA Club members preparing for entry-level interviews in the Net
 | components.md | The blocks a page is made of and which blocks each pattern uses |
 | schemas.md | Exact format of problem.json, approach.json, tests.json, steps, site.json |
 | index-spec.md | How the home page groups and links pages |
+| notion-guides.md | Public Notion guide link for each pattern |
 | ../../../adr/ | Why things are built this way. Do not contradict an accepted ADR without a new ADR |
 
 ## Repo map
@@ -62,11 +63,12 @@ site.json        site-wide links
    - Edge cases come from the constraints: smallest n, all equal, none matching, extreme values.
 5. **Write brute.py** — the oracle: simplest correct solution, a function `brute(<params>)` that returns the answer (for in-place problems, the final array). Mark the operation counter line `T.op()  # @trace`. It is also shown to readers, so comment it.
 6. **Write gen.py** — `gen(rng)` returns random args inside the constraints, small (n ≤ 12) and with many repeats so edge cases appear.
-7. **Write tests.json** — extra cases worth keeping that are not shown on the page (extreme values, n = 1).
-8. **Write the approach folder** (workflow B, steps 2–5).
-9. **Run `python3 build.py`.** Fix whatever it reports. Warnings about step counts: shorten or change the example.
-10. **Show the user:** the Pattern ID block, the page path (docs/<folder>.html), and 1–2 sentences on what to watch in the animation. Ask them to review the captions — tests cannot check if a caption is clear.
-11. **Remind the user** to submit each language on the LeetCode account and then say which ones were accepted (workflow E).
+7. **Pattern guide.** If site.json `patternGuides` has no entry for the approach's pattern label, take the link from notion-guides.md (match by meaning: "Two pointers" = "Two Pointers") and add it. Ask the user only if no row matches.
+8. **Write tests.json** — extra cases worth keeping that are not shown on the page (extreme values, n = 1).
+9. **Write the approach folder** (workflow B, steps 2–5).
+10. **Run `python3 build.py`.** Fix whatever it reports. Warnings about step counts: shorten or change the example.
+11. **Show the user:** the Pattern ID block, the page path (docs/<folder>.html), and 1–2 sentences on what to watch in the animation. Ask them to review the captions — tests cannot check if a caption is clear.
+12. **Remind the user** to submit each language on the LeetCode account and then say which ones were accepted (workflow E).
 
 ## Workflow B — add an approach
 1. Folder name = approach id = URL anchor: short, lowercase, pattern + data structure, e.g. `sliding-window-hash-map`.
@@ -80,7 +82,8 @@ site.json        site-wide links
 3. **solution.cpp** (always) and **solution.c** (only if allowed): same logic, same anchor names (`// @a:<name>`), `// @hide` on includes and `using namespace std;`. Use long long where overflow is possible, `mid = lo + (hi - lo) / 2`.
 4. **approach.json** — name, pattern, ds, complexity, pattern card (signals, pattern, core idea), invariant, phase labels, legend (only roles used on this page; not shown for now but always written, ADR 023), whenToUse, accepted: [].
 5. **canvas.js** — an object `({ build(ctx) {...}, render(step, ctx, flash) {...} })`. Pick the canvas from components.md. Map the semantic state from solution.py to VIZ helpers. If two approaches need the same new canvas, move it into core as a helper (with approval).
-6. Run build.py and review as in workflow A.
+6. If the approach brings a new pattern label, add its guide link (workflow A, step 7).
+7. Run build.py and review as in workflow A.
 
 ## Workflow C — a new design element
 When a problem needs something core does not have (a tree, a graph, a new role colour):

@@ -4,7 +4,7 @@ Source: core/index.html + core/index.js. Content: docs/catalogue.js, generated b
 
 ## Blocks
 1. Title and intro (site.json).
-2. Links: Notion pattern guides, LeetCode profile (if set), GitHub repo (if set).
+2. Links row: one general "Pattern guides (Notion)" link, LeetCode profile (if set), Big-O reference, GitHub repo (if set). Per-pattern guide links are only on problem pages (meta row).
 3. Filters above the table: Difficulty, Pattern, Data structure (dropdowns built from the catalogue), "has a C version", and "Clear filters" when any filter is on. The footer count shows "N of M problems" while filtering.
 4. One plain table, one row per problem:
 
@@ -15,13 +15,12 @@ Source: core/index.html + core/index.js. Content: docs/catalogue.js, generated b
 | Difficulty | Easy / Medium / Hard pill | yes |
 | Pattern | one line per approach, each links to its tab (`page.html#approach-id`) | yes |
 | Data structure | one line per approach | yes |
-| Guide | one "guide ↗" per approach: site.json patternGuides[pattern], else the general Notion link | no |
 
 5. Articles: a simple list, only when site.json has articles.
-6. Footer: problem count and Big-O reference. No ai-panic link: the ai-panic/ folder stays in the repo and in the README, but the site does not link to it.
+6. Footer: problem count only. No ai-panic link: the ai-panic/ folder stays in the repo and in the README, but the site does not link to it.
 
 ## Problems with several approaches
-One row per problem, never duplicated. Pattern, Data structure and Guide show one line per approach, and each pattern line links to its tab. With a pattern or data-structure filter on, the row shows only the matching approaches; the links still open the right tab.
+One row per problem, never duplicated. Pattern and Data structure show one line per approach, and each pattern line links to its tab. With a pattern or data-structure filter on, the row shows only the matching approaches; the links still open the right tab.
 
 ## Not on the home page
 - Complexity (it is on each page).
