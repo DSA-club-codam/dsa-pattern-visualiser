@@ -59,7 +59,7 @@
 
   <section class="gl-section"><h2>Code drawer</h2>
     <details class="panel" open><summary>Show code</summary>
-      <div class="vz-tabs"><button aria-selected="true">Python3<span class="acc">✓</span></button><button aria-selected="false">C++17</button><button aria-selected="false">C</button></div>
+      <div class="vz-codebar"><div class="vz-tabs"><button aria-selected="true">Python3<span class="acc">✓</span></button><button aria-selected="false">C++17</button><button aria-selected="false">C</button></div><button type="button" class="vz-copy" id="gl-copy">Copy</button></div>
       <div id="gl-code"></div><p class="note">✓ = accepted on LeetCode in that language.</p></details></section>
 
   <footer class="vz-footer"><a href="index.html">All visualisations</a></footer>
@@ -141,6 +141,7 @@
     pre.querySelectorAll(".ln")[3].classList.add("on");
     $("gl-code").innerHTML = "";
     $("gl-code").append(pre);
+    $("gl-copy").onclick = (e) => VIZ.copyCode(pre, e.currentTarget);
   }
 
   document.querySelectorAll("[data-theme-btn]").forEach((btn) => btn.addEventListener("click", () => {

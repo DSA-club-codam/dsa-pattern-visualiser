@@ -16,7 +16,7 @@
 | 9 | Side panels: Variables (always) + extra panels from canvas.js | always | step.vars |
 | 10 | Caption: phase tag, caption, invariant | always | step |
 | 11 | Controls: Reset, Prev, Play/Pause, Next, speed, "Step n / N"; keys ← → Space Home | always | — |
-| 12 | Code drawer (collapsed "Show code"): tabs Python3 · C++17 · C, ✓ if accepted, current line highlighted via anchors, "No C version: …" note | always | approach.code |
+| 12 | Code drawer (collapsed "Show code"): tabs Python3 · C++17 · C, ✓ if accepted, current line highlighted via anchors, "Copy" button (copies the open tab's code without line numbers), "No C version: …" note. Line numbers are drawn by CSS (`.ln::before { content: attr(data-n) }`), so selecting and copying never includes them | always | approach.code |
 | 13 | Legend (collapsed, at the bottom) | always | approach.legend |
 | 14 | Footer: All visualisations, Notion guides, Big-O, LeetCode profile (if set) | always | site.json |
 

@@ -192,11 +192,13 @@ button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px soli
 
 /* ---------- code drawer ---------- */
 .vz-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.vz-codebar { display: flex; align-items: flex-start; gap: 6px; margin: 10px 0; }
+.vz-codebar .vz-tabs { flex: 1; margin: 0; }
 .vz-tabs button[aria-selected="true"] { border-color: var(--role-front); box-shadow: inset 0 0 0 1px var(--role-front); font-weight: 600; }
 .acc { color: var(--role-best); font-weight: 700; margin-left: 4px; }
 pre.code { margin: 0; padding: 8px 0; background: var(--code-bg); border-radius: 8px; overflow-x: auto; font-size: var(--fs-code); }
 .ln { display: block; padding: 1px 12px 1px 0; white-space: pre; border-left: 3px solid transparent; }
-.ln b { display: inline-block; width: 30px; text-align: right; padding-right: 10px; color: var(--muted); font-weight: 400; }
+.ln::before { content: attr(data-n); display: inline-block; width: 30px; text-align: right; padding-right: 10px; color: var(--muted); font-weight: 400; }
 .ln.on { background: var(--code-hl); border-left-color: var(--role-front); }
 .ln .c { color: var(--muted); }
 

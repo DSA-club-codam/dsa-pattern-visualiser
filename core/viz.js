@@ -278,13 +278,41 @@
     }
   };
 
-  /** code block: lines [{ src, comment }] */
+  /** code block: lines [{ src, comment }]. Line numbers come from CSS (.ln::before), so they are never copied. */
   VIZ.codeBlock = function (lines) {
     const pre = el("pre", "code");
     pre.innerHTML = lines
-      .map((l, i) => `<span class="ln" data-line="${i + 1}"><b>${i + 1}</b>${esc(l.src)}${l.comment ? (l.src.trim() ? "  " : "") + '<span class="c">' + esc(l.comment) + "</span>" : ""}</span>`)
+      .map((l, i) => `<span class="ln" data-n="${i + 1}">${esc(l.src)}${l.comment ? (l.src.trim() ? "  " : "") + '<span class="c">' + esc(l.comment) + "</span>" : ""}</span>`)
       .join("");
     return pre;
+  };
+
+  /** the text of a code block as shown, without line numbers */
+  VIZ.codeText = (pre) => Array.from(pre.querySelectorAll(".ln"), (l) => l.textContent).join("\n") + "\n";
+
+  /** copy a code block to the clipboard; the button shows "Copied" for a moment */
+  VIZ.copyCode = function (pre, btn) {
+    const text = VIZ.codeText(pre);
+    const done = (ok) => {
+      btn.textContent = ok ? "Copied" : "Copy failed";
+      clearTimeout(btn._t);
+      btn._t = setTimeout(() => (btn.textContent = "Copy"), 1500);
+    };
+    const fallback = () => {
+      const ta = el("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = 0;
+      document.body.append(ta);
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      ta.remove();
+      done(ok);
+    };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(() => done(true), fallback);
+    else fallback();
   };
 
   // =====================================================================
@@ -343,7 +371,7 @@
         <label>Speed <input id="vz-speed" type="range" min="1" max="10" value="5"></label>
         <span class="vz-counter" id="vz-counter"></span></div>
         <div class="hint">Keyboard: ← / → to step, Space to play or pause, Home to reset.</div>`,
-      code: `<details class="panel" id="vz-code"><summary>Show code</summary><div class="vz-tabs" id="vz-tabs" role="tablist" aria-label="Language"></div><div id="vz-code-body"></div></details>`,
+      code: `<details class="panel" id="vz-code"><summary>Show code</summary><div class="vz-codebar"><div class="vz-tabs" id="vz-tabs" role="tablist" aria-label="Language"></div><button type="button" class="vz-copy" id="vz-copy" title="Copy this code without line numbers">Copy</button></div><div id="vz-code-body"></div></details>`,
     };
     const body = `<div class="vz-stage"><div class="vz-col">${parts.canvas}${parts.code}</div>
            <div class="vz-col">${parts.aux}${parts.controls}${parts.caption}</div></div>`;
@@ -468,6 +496,11 @@
       if (notes.length) body.insertAdjacentHTML("beforeend", `<p class="note">${notes.map(esc).join(" ")}</p>`);
     }
 
+    $("vz-copy").addEventListener("click", (e) => {
+      const pre = document.querySelector(`#vz-code-body pre[data-lang="${st.lang}"]`);
+      if (pre) VIZ.copyCode(pre, e.currentTarget);
+    });
+
     $("vz-tabs").addEventListener("click", (e) => {
       const b = e.target.closest("[data-lang]");
       if (!b) return;
@@ -509,7 +542,7 @@
         const line = (A.code[pre.dataset.lang].anchors || {})[s.anchor];
         let on = null;
         pre.querySelectorAll(".ln").forEach((l) => {
-          const hit = +l.dataset.line === line;
+          const hit = +l.dataset.n === line;
           l.classList.toggle("on", hit);
           if (hit) on = l;
         });
