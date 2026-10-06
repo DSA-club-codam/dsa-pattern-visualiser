@@ -248,7 +248,7 @@ def make_driver(lang, sig, src_path):
                   "static inline long long rd(void) { long long x; if (scanf(\"%lld\", &x) != 1) exit(2); return x; }",
                   "static inline void pr(const int* v, int n) { putchar('['); for (int i = 0; i < n; i++) { if (i) putchar(','); printf(\"%d\", v[i]); } printf(\"]\\n\"); }",
                   "static inline void prl(const long long* v, int n) { putchar('['); for (int i = 0; i < n; i++) { if (i) putchar(','); printf(\"%lld\", v[i]); } printf(\"]\\n\"); }",
-                  "int main(void) {", "  long long T = rd();", "  while (T--) {"]
+                  "int main(void) {", "  (void)pr; (void)prl;  /* clang warns about unused static inline helpers */", "  long long T = rd();", "  while (T--) {"]
         call, frees, sizes = [], [], {}
         for p in sig["params"]:
             n, t = p["name"], p["type"]

@@ -60,8 +60,8 @@ button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px soli
 .vz-aux { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gap); }
 .vz-aux > :only-child { grid-column: 1 / -1; }
 @media (max-width: 860px) { .vz-aux { grid-template-columns: minmax(0, 1fr); } }
-.vz-aux h3 { margin: 0 0 8px; font-size: 14px; }
-.vz-aux h3 small { color: var(--muted); font-weight: 400; }
+.vz-aux h3, .vz-canvas h3 { margin: 0 0 8px; font-size: 14px; }
+.vz-aux h3 small, .vz-canvas h3 small { color: var(--muted); font-weight: 400; }
 
 /* page layout (ADR 017): left = animation + code, right = variables, controls, caption */
 .vz-stage { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr); gap: var(--gap); align-items: start; }

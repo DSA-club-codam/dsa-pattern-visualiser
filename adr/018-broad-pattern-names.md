@@ -1,6 +1,6 @@
 # 018 — Pattern names stay broad
 
-Status: accepted · 2026-10-06
+Status: superseded by 022 · 2026-10-06
 
 ## Context
 The first sliding-window problem was labelled "Sliding window (variable)". With a fixed-window problem later, the home page would show two sliding-window patterns, and it would be unclear where to put a problem.

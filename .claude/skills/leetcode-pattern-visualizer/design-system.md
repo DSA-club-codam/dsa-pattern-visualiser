@@ -38,7 +38,7 @@ Every meaning also has a non-colour signal:
 - duplicates of an over-limit value: dashed red border
 
 ## 3. Pointer names (ADR 011)
-left / right — towards each other, and sliding window edges · slow / fast — same direction, linked lists · lo / mid / hi — binary search. The trailing pointer is always --role-back, the leading one --role-front. Code variable names match the labels.
+left / right — towards each other, and sliding window edges · slow / fast — same direction, linked lists · lo / mid / hi — binary search · p1 / p2 / write — merging two arrays (ADR 021: write is --role-back, p1 and p2 are --role-front). The trailing pointer is always --role-back, the leading one --role-front. Code variable names match the labels.
 
 ## 4. Cell states (CSS classes on .ar-cell)
 `current`, `swap`, `conflict` (+ tag), `dup`, `done`, `best`, `new`, `zero`, `removed`, `out`. Several can combine (e.g. `zero swap`).

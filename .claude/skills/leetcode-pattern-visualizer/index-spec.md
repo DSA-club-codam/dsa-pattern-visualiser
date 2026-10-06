@@ -28,5 +28,5 @@ One row per problem, never duplicated. Pattern, Data structure and Guide show on
 - The design gallery and the ADRs. They stay in the repo and in docs/ for reviewers, but published pages do not link to them.
 
 ## Rules
-- Pattern and data-structure names come from approach.json. Spell them the same every time. Current names: "Two pointers · same direction", "Sliding window"; "Array", "Hash map".
-- Pattern names stay broad (ADR 018): one "Sliding window", not fixed / variable. The variant (fixed or variable size) is said in the "Why this pattern?" card, not in the name.
+- Pattern and data-structure names come from approach.json. Spell them the same every time. Current names: "Two pointers", "Sliding window"; "Array", "Hash map".
+- Pattern names stay broad (ADR 022, which supersedes 018): one "Sliding window", not fixed / variable; one "Two pointers", not same direction / two arrays. The variant is said in the "Why this pattern?" card, not in the name.

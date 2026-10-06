@@ -21,6 +21,8 @@ Why the visualiser is built the way it is. One file per decision. To change a de
 | 015 | Home page is a plain table; gallery and ADRs are not linked |
 | 016 | Problems are not tied to LeetCode |
 | 017 | Page layout: animation and code on the left, state and controls on the right |
-| 018 | Pattern names stay broad |
+| 018 | Pattern names stay broad (superseded by 022) |
 | 019 | Automatic check on GitHub; AI has no autonomy in the repository |
 | 020 | The site is published by GitHub Actions, only after a green check |
+| 021 | Pointer names for merging two arrays: p1 / p2 / write |
+| 022 | One "Two pointers" label for the whole family (supersedes 018) |

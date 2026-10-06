@@ -1,0 +1,28 @@
+{
+  "order": 1,
+  "name": "Two pointers (merge from the end)",
+  "pattern": "Two pointers",
+  "ds": ["Array"],
+  "time": "O(m + n)",
+  "space": "O(1) extra",
+  "whenToUse": "Always for this problem: one pass, in place, and it uses the free space at the end of nums1.",
+  "card": {
+    "signals": "\"two arrays sorted in non-decreasing order\" means the largest remaining value is always at the end of one of them. \"stored inside nums1\" with the free slots at the end means we fill nums1 from the back, so nothing is overwritten too early.",
+    "pattern": "two pointers on two arrays, merging from the end. p1 and p2 read the last unused value of each array; write marks the next slot to fill. All three move right to left. O(m + n) time, O(1) extra space.",
+    "coreIdea": "compare nums1[p1] with nums2[p2], copy the larger one to nums1[write], and move that reader and write one step left. Stop when nums2 is used up: whatever is left in nums1 is already in place."
+  },
+  "invariant": "Slots after write hold the largest values, in their final order. write = p1 + p2 + 1, so write never overtakes p1: a value in nums1 is always copied before its slot is reused.",
+  "phases": { "init": "start", "next": "next round", "compare": "compare", "take": "copy", "advance": "write--", "stop": "loop ends", "return": "done" },
+  "legend": [
+    { "swatch": "ptr-back", "text": "write: next slot to fill in nums1" },
+    { "swatch": "ptr-front", "text": "p1 / p2: last unused value of nums1 / nums2" },
+    { "swatch": "current", "text": "the larger of nums1[p1] and nums2[p2]" },
+    { "swatch": "new", "text": "value just written to nums1[write]" },
+    { "swatch": "done", "text": "value in its final place" },
+    { "swatch": "zero", "text": "placeholder 0 (an empty slot, dashed)" },
+    { "swatch": "out", "text": "already used: a free slot in nums1, or a placed value in nums2" },
+    { "swatch": "band-best", "text": "placed zone (write, end]" },
+    { "swatch": "band-gap", "text": "free slots (p1, write]" }
+  ],
+  "accepted": []
+}

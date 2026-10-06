@@ -1,14 +1,14 @@
 {
   "order": 1,
   "name": "Two pointers (slow / fast)",
-  "pattern": "Two pointers · same direction",
+  "pattern": "Two pointers",
   "ds": ["Array"],
   "time": "O(n)",
   "space": "O(1) extra",
   "whenToUse": "Always for this problem: one pass, in place, order kept.",
   "card": {
     "signals": "\"in place\" (no copy allowed), \"keep the relative order\" and \"move some values to one end\". Together they point to two pointers that move in the same direction: fast reads, slow writes.",
-    "pattern": "one pass, O(n) time, O(1) extra space. Each non-zero is swapped at most once.",
+    "pattern": "two pointers, same direction: both move left to right. One pass, O(n) time, O(1) extra space. Each non-zero is swapped at most once.",
     "coreIdea": "fast finds each non-zero, slow marks the next free slot for it, and a swap sends the non-zero left and pushes a zero right."
   },
   "invariant": "Left of slow: only non-zeros, in their original order. From slow up to fast: only zeros.",

@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "title": "Merge Sorted Array",
+  "source": { "site": "LeetCode", "id": "88", "url": "https://leetcode.com/problems/merge-sorted-array/" },
+  "difficulty": "Easy",
+  "nMax": 200,
+  "signature": {
+    "python": "merge",
+    "cpp": "merge",
+    "c": "merge",
+    "params": [
+      { "name": "nums1", "type": "int[]" },
+      { "name": "m", "type": "int" },
+      { "name": "nums2", "type": "int[]" },
+      { "name": "n", "type": "int" }
+    ],
+    "returns": "void",
+    "inPlace": "nums1"
+  },
+  "constraints": [
+    {
+      "text": "nums1.length == m + n",
+      "meaning": "nums1 already has room for every value. The first m slots are real values; the last n slots are placeholder zeros.",
+      "impact": "No new array is needed. The free space sits at the end, so filling nums1 from the back never overwrites a value we still need."
+    },
+    {
+      "text": "nums2.length == n",
+      "meaning": "nums2 holds exactly the n values to merge in.",
+      "impact": "The loop can stop as soon as all n values of nums2 are placed."
+    },
+    {
+      "text": "0 ≤ m, n ≤ 200",
+      "meaning": "Either array can be empty: m = 0 means nums1 has only placeholders, n = 0 means there is nothing to merge.",
+      "impact": "The code must handle p1 < 0 (nums1 used up) and n = 0 (loop never runs) without reading outside the arrays."
+    },
+    {
+      "text": "1 ≤ m + n ≤ 200",
+      "meaning": "At most 200 values in total, and never zero.",
+      "impact": "Even O(n²) would be fast here. The O(m + n) merge is what interviewers expect, and the follow-up asks for it."
+    },
+    {
+      "text": "−10⁹ ≤ nums1[i], nums2[j] ≤ 10⁹",
+      "meaning": "Negative values and real zeros can appear.",
+      "impact": "Values fit in int. A 0 inside the first m slots is a real value, so you cannot spot the free slots by looking for zeros: use m."
+    },
+    {
+      "text": "Both arrays sorted in non-decreasing order (statement)",
+      "meaning": "Each array is already in order; duplicates are allowed.",
+      "impact": "The largest remaining value is always at the end of one of the two arrays, so one comparison per slot is enough."
+    }
+  ],
+  "bruteForce": {
+    "summary": "copy nums2 into the empty tail of nums1, then sort the whole array: O((m+n) log(m+n)) with a library sort. It throws away the fact that both parts are already sorted. The code below sorts with insertion sort so each comparison can be counted.",
+    "opsUnit": "comparisons"
+  },
+  "examples": [
+    { "id": "lc1", "label": "LeetCode Example 1: [1,2,3,0,0,0] + [2,5,6]", "kind": "main",
+      "args": { "nums1": [1, 2, 3, 0, 0, 0], "m": 3, "nums2": [2, 5, 6], "n": 3 }, "expected": [1, 2, 2, 3, 5, 6] },
+    { "id": "mixed", "label": "Interleaved: [3,5,9,0,0,0,0] + [1,4,6,10]", "kind": "main",
+      "args": { "nums1": [3, 5, 9, 0, 0, 0, 0], "m": 3, "nums2": [1, 4, 6, 10], "n": 4 } },
+    { "id": "nums1-first", "label": "nums1 runs out first: [4,5,6,0,0,0] + [1,2,3]", "kind": "main",
+      "args": { "nums1": [4, 5, 6, 0, 0, 0], "m": 3, "nums2": [1, 2, 3], "n": 3 } },
+    { "id": "lc2", "label": "LeetCode Example 2: [1] + []", "kind": "edge",
+      "args": { "nums1": [1], "m": 1, "nums2": [], "n": 0 }, "expected": [1] },
+    { "id": "lc3", "label": "LeetCode Example 3: [0] (m = 0) + [1]", "kind": "edge",
+      "args": { "nums1": [0], "m": 0, "nums2": [1], "n": 1 }, "expected": [1] },
+    { "id": "real-zero", "label": "Real zero and negatives: [-3,0,0,0] (m = 2) + [-5,0]", "kind": "edge",
+      "args": { "nums1": [-3, 0, 0, 0], "m": 2, "nums2": [-5, 0], "n": 2 } },
+    { "id": "all-equal", "label": "All equal: [2,2,0,0] + [2,2]", "kind": "edge",
+      "args": { "nums1": [2, 2, 0, 0], "m": 2, "nums2": [2, 2], "n": 2 } }
+  ]
+}

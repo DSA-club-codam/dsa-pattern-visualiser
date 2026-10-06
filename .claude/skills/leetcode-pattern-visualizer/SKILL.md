@@ -103,12 +103,13 @@ When the user says a language was accepted on LeetCode, add it to "accepted" in 
 ## ai-panic/
 When you notice yourself worrying about something unlikely ("what if LeetCode renames every slug"), write it as a short, light-hearted file in ai-panic/ instead of adding complexity. One file per worry: what could go wrong, how likely, what we would do. ADRs never cite ai-panic as a reason. The user will check one day which ones came true.
 
-## Pointer names (ADR 011)
+## Pointer names (ADR 011, ADR 021)
 | Pattern | Names | Role colour |
 |---|---|---|
 | Two pointers towards each other | left / right | back / front |
 | Sliding window | left / right | back / front |
 | Same direction (read/write), linked list | slow / fast | back / front |
+| Two arrays, merge (ADR 021) | p1 / p2 / write | front / front / back |
 | Binary search | lo / mid / hi | back / mid / front |
 Code variable names must match the labels on the canvas.
 

@@ -37,6 +37,7 @@
 | `VIZ.kvMap(host, rows, title)` | key → value table, rows marked hit / new | Two Sum style lookups |
 | `VIZ.stack(host, items, title)` | vertical stack, top marked | monotonic stack, parentheses, iterative DFS |
 | `VIZ.queue(host, items, title)` | horizontal queue, front → back | BFS |
+| `<h3>` inside the canvas | a title above each row when the canvas has several ArrayRows (same style as side-panel titles) | merge, prefix sum |
 | `ctx.extraPanel()` | adds one more side panel for the canvas to draw into | anything with a map/stack/queue |
 
 ## Not built yet (workflow C before first use)
@@ -55,6 +56,7 @@ Rule: build it inside canvas.js the first time if it is truly one-off; the secon
 |---|---|---|---|
 | Two pointers (towards each other) | ArrayRow | — | compare, move left, move right, meet |
 | Two pointers (same direction) | ArrayRow + arc | — | check, skip, swap/write, advance |
+| Two pointers (two arrays, merge) | two ArrayRows, each under an `<h3>` title | — | compare, copy the larger/smaller, move reader and write, stop |
 | Fast & slow (linked list) | LinkedList | — | each move, meeting point, cycle entry |
 | Sliding window — variable size (pattern label: "Sliding window") | ArrayRow + window band + bar | countMap or kvMap | expand, conflict, shrink, best updated |
 | Sliding window — fixed size (pattern label: "Sliding window") | ArrayRow + window band | — | add right, remove left, compare |
