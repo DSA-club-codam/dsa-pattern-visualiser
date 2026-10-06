@@ -98,6 +98,7 @@ State is a full snapshot (not a diff), so any step can be shown on its own (Prev
   "bigO": "https://www.bigocalc.com/",
   "leetcodeProfile": "",                    // empty = hidden
   "repoUrl": "",                            // empty = "Source on GitHub" link hidden
+  "goatcounter": "",                        // GoatCounter site code (ADR 024); empty = no analytics script
   "articles": [{ "title": "...", "url": "https://dev.to/...", "tags": ["Sliding window (variable)"] }]
 }
 ```

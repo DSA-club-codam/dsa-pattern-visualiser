@@ -48,7 +48,7 @@ site.json        site-wide links
 3. Never edit docs/. Change sources, run `python3 build.py`.
 4. A page is finished only when `python3 build.py` ends with "✓ build ok".
 5. Never add a colour, shape or block that is not in core/ and gallery.html. Propose it first (workflow C).
-6. No external libraries, CDNs or build tools. Plain static files, relative links only.
+6. No external libraries, CDNs or build tools. Plain static files, relative links only. The one exception is the GoatCounter analytics script that build.py adds to published pages (ADR 024); never add another.
 7. One page per problem. Each approach is a tab on that page (ADR 006).
 8. canvas.js draws only with VIZ helpers and CSS classes from core. No colour values, no sizes.
 9. Git: never commit, push, open or merge a pull request, or change repository settings unless the user asks for that action in this conversation. When asked to publish: run `python3 build.py`, show `git status`, commit sources and docs/ together, then push. CI (.github/workflows/check.yml) must stay green (ADR 019).

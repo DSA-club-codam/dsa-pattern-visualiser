@@ -527,9 +527,19 @@ PAGE_HTML = """<!doctype html>
 {canvases}
 <script>window.PAGE = {data};</script>
 <script>VIZ.mount(window.PAGE);</script>
-</body>
+{analytics}</body>
 </html>
 """
+
+
+def analytics_tag(site):
+    """GoatCounter script for published pages (ADR 024); empty when site.json has no "goatcounter" code."""
+    code = site.get("goatcounter", "")
+    if not code:
+        return ""
+    if not re.fullmatch(r"[a-z0-9-]+", code):
+        fail('site.json "goatcounter" must be a GoatCounter site code (a-z, 0-9, -), got %r' % code)
+    return ('<script data-goatcounter="https://%s.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>\n' % code)
 
 
 def source_label(src):
@@ -580,8 +590,9 @@ def emit(pages, site):
     write(os.path.join(DOCS, ".nojekyll"), "")
     for f in ("tokens.css", "viz.css", "viz.js", "index.js"):
         copy_to_docs(os.path.join(CORE, f), "core/" + f)
-    for f in ("index.html", "gallery.html"):
-        copy_to_docs(os.path.join(CORE, f), f)
+    analytics = analytics_tag(site)
+    write(os.path.join(DOCS, "index.html"), read(os.path.join(CORE, "index.html")).replace("</body>", analytics + "</body>"))
+    copy_to_docs(os.path.join(CORE, "gallery.html"), "gallery.html")  # no analytics on the gallery
     catalogue = []
     for name, page in pages:
         tags = []
@@ -595,7 +606,7 @@ def emit(pages, site):
         title = "%s · %s" % (source_label(p["source"]), p["title"]) if source_label(p["source"]) else p["title"]
         desc = "Step-by-step visualisation: " + "; ".join(a["name"] for a in page["approaches"])
         write(os.path.join(DOCS, name + ".html"), PAGE_HTML.format(
-            title=html_escape(title), desc=html_escape(desc), name=name, canvases="\n".join(tags), data=js_safe(page)))
+            title=html_escape(title), desc=html_escape(desc), name=name, canvases="\n".join(tags), data=js_safe(page), analytics=analytics))
         catalogue.append({
             "file": name + ".html", "source": p["source"], "label": source_label(p["source"]), "title": p["title"], "difficulty": p["difficulty"],
             "approaches": [{"id": a["id"], "name": a["name"], "pattern": a["pattern"], "ds": a["ds"], "time": a["time"],
@@ -658,6 +669,8 @@ def smoke(pages):
         for width in (1280, 375):
             for t in targets:
                 page = browser.new_page(viewport={"width": width, "height": 900})
+                # never reach GoatCounter from tests: serve an empty script instead (ADR 024)
+                page.route("https://gc.zgo.at/**", lambda route: route.fulfill(status=200, content_type="application/javascript", body=""))
                 errors = []
                 page.on("pageerror", lambda e: errors.append(str(e)))
                 page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
