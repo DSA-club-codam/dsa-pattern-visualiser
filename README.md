@@ -1,6 +1,6 @@
 # DSA Club · Pattern Visualiser
 
-**Open the site: https://dsa-club-codam.github.io/dsa-pattern-visualiser/**
+**Open the site: https://dsa-codam.github.io/visualiser/**
 
 Step-by-step animations of coding-interview problems, grouped by algorithmic pattern. Made for the Data Structures & Algorithms club at Codam.
 
