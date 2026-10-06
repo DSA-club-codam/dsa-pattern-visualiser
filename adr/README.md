@@ -22,3 +22,4 @@ Why the visualiser is built the way it is. One file per decision. To change a de
 | 016 | Problems are not tied to LeetCode |
 | 017 | Page layout: animation and code on the left, state and controls on the right |
 | 018 | Pattern names stay broad |
+| 019 | Automatic check on GitHub; AI has no autonomy in the repository |

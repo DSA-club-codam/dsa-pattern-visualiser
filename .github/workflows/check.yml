@@ -1,0 +1,44 @@
+# Runs build.py on every pull request and every push to main (ADR 019).
+# No AI and no secrets: only the project's own tests.
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the browser for the smoke test
+        run: |
+          python -m pip install --quiet playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Test every solution and build the site
+        run: python build.py
+
+      - name: docs/ must match the sources
+        run: |
+          if ! git diff --quiet -- docs/ || [ -n "$(git ls-files --others --exclude-standard -- docs/)" ]; then
+            echo "::error::docs/ is out of date. Run 'python3 build.py' locally and commit docs/ together with your sources. Never edit docs/ by hand."
+            git status --short -- docs/
+            exit 1
+          fi
+          echo "docs/ is up to date."

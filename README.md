@@ -1,44 +1,30 @@
 # DSA Club · Pattern Visualiser
 
-Step-by-step animations of LeetCode solutions, grouped by algorithmic pattern, for the Data Structures & Algorithms club at Codam.
+**Open the site: https://dsa-club-codam.github.io/dsa-pattern-visualiser/**
 
-Each page shows one problem: which clues in the statement point to the pattern, what every pointer and data structure does at each step, and why the pattern beats brute force. Code is in Python3 and C++17, and in C where it makes sense.
+Step-by-step animations of coding-interview problems, grouped by algorithmic pattern. Made for the Data Structures & Algorithms club at Codam.
 
-## How it works
-```
-problems/<problem>/            sources: statement data, brute force, tests, solutions
-        │
-        ▼
-python3 build.py               1. every solution vs a brute-force oracle (examples + 200 random inputs)
-        │                      2. C++ and C compiled and checked on the same inputs
-        │                      3. traced Python records the animation steps
-        │                      4. pages, home page and catalogue assembled
-        ▼                      5. headless-browser smoke test (if Playwright is installed)
-docs/                          the published site (GitHub Pages)
-```
-A page is only written when every check passes. Animation steps are never written by hand: they come from running the real solution.
+Each problem page shows:
+- which clues in the problem statement point to the pattern
+- what every pointer and data structure does at each step, next to the line of code that runs
+- the constraints and what they tell you about the complexity you need
+- why the pattern beats brute force, with an operation count on the same input
+- the solution in Python3 and C++17, and in C where it fits the problem
 
-## Build
-Needs Python 3.8+, a C++17 compiler and a C compiler (on macOS: `xcode-select --install`). No packages.
-```
-python3 build.py
-open docs/index.html
-```
-Optional full browser check: `pip3 install playwright && python3 -m playwright install chromium`.
+Every solution is checked against a brute-force answer and across languages before a page is published.
+
+Pattern theory lives in the club's guides on Notion: [Pattern guides](https://cosmic-ray-317.notion.site/2c5b90a8e089805cb323c5733701f9cf?v=2c5b90a8e089806f831a000c62ebfca1).
+
+## Contributing
+Ideas, corrections and pull requests are welcome. Open an issue to suggest a problem, report an unclear explanation or a bug. For pull requests, read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 ## Repo
 | Path | What |
 |---|---|
-| `problems/` | one folder per problem, one subfolder per approach |
-| `core/` | shared engine and design system; live preview in `docs/gallery.html` |
-| `build.py` | tests and builds everything |
-| `docs/` | generated site — do not edit |
-| `adr/` | why it is built this way |
-| `.claude/skills/leetcode-pattern-visualizer/` | instructions Claude Code follows to add problems |
+| `problems/` | sources: one folder per problem, one subfolder per approach |
+| `core/` | shared page engine and design system |
+| `build.py` | tests every solution, then builds the site |
+| `docs/` | the published site (generated, do not edit) |
+| `adr/` | why the project is built this way |
+| `.claude/skills/` | instructions Claude Code follows when it adds a problem |
 | `ai-panic/` | worries that did not deserve code |
-
-## How it was made
-Built with Claude Code. The AI writes solutions, captions and page code following the skill in `.claude/skills/`. Correctness does not depend on trusting the AI: `build.py` checks every solution against an independent brute force and across languages before anything is published, and each solution is also submitted to LeetCode. Design and architecture decisions were made together and are recorded in `adr/`.
-
-## Publish
-GitHub → Settings → Pages → Deploy from a branch → `main`, folder `/docs`.

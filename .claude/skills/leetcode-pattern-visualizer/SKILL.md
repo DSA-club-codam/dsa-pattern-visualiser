@@ -50,6 +50,7 @@ site.json        site-wide links
 6. No external libraries, CDNs or build tools. Plain static files, relative links only.
 7. One page per problem. Each approach is a tab on that page (ADR 006).
 8. canvas.js draws only with VIZ helpers and CSS classes from core. No colour values, no sizes.
+9. Git: never commit, push, open or merge a pull request, or change repository settings unless the user asks for that action in this conversation. When asked to publish: run `python3 build.py`, show `git status`, commit sources and docs/ together, then push. CI (.github/workflows/check.yml) must stay green (ADR 019).
 
 ## Workflow A — add a problem
 1. **Confirm the problem.** Restate it in 2–3 lines with its constraints and examples. If you are not certain of any detail, ask the user to paste the statement. Folder name: `<short>-<id>-<slug>` with the slug from the problem URL, e.g. `lc-283-move-zeroes`; for a source without numbers, `<short>-<slug>` (e.g. `nc-...`). Fill "source" in problem.json (ADR 016).
