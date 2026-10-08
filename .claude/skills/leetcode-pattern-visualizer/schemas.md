@@ -16,7 +16,9 @@ schemaVersion: 1. All files are plain JSON (no comments, no trailing commas). Py
     "python": "moveZeroes", "cpp": "moveZeroes", "c": "moveZeroes",
     "params": [{ "name": "nums", "type": "int[]" }],   // int | long | int[] | long[]
     "returns": "void",                                  // void | int | long | bool | int[]
-    "inPlace": "nums"                                   // required when returns = void
+    "inPlace": "nums",                                  // required when returns = void
+    "judge": "sortedPrefix"                             // optional (ADR 025): returns int k; the answer is
+                                                        // sorted(inPlace[:k]), like LeetCode's custom judge
   },
   "constraints": [{ "text": "1 ≤ nums.length ≤ 10⁴", "meaning": "...", "impact": "..." }],
   "bruteForce": { "summary": "...", "opsUnit": "element checks" },
@@ -31,7 +33,7 @@ schemaVersion: 1. All files are plain JSON (no comments, no trailing commas). Py
 - More param or return types: extend `make_driver()` in build.py first.
 
 ## problems/<…>/brute.py
-`def brute(<params in signature order>)` → answer (in-place problems: the final array). One `T.op()  # @trace` per basic operation. Shown on the page (minus @trace lines).
+`def brute(<params in signature order>)` → answer (in-place problems: the final array; judge "sortedPrefix": the sorted first k elements). One `T.op()  # @trace` per basic operation. Shown on the page (minus @trace lines).
 
 ## problems/<…>/gen.py
 `def gen(rng)` → dict of args inside the constraints. `rng` is `random.Random` with a fixed seed, so runs repeat.

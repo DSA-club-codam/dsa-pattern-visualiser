@@ -172,6 +172,11 @@ def call_solution(ns, sig, args, filename):
         fail("%s: Solution has no method %s" % (filename, sig["python"]))
     a = copy.deepcopy(args)
     res = fn(*[a[p["name"]] for p in sig["params"]])
+    if sig.get("judge") == "sortedPrefix":
+        arr = a[sig["inPlace"]]
+        if not isinstance(res, int) or not 0 <= res <= len(arr):
+            return {"badK": res}
+        return sorted(arr[:res])
     if sig["returns"] == "void":
         return a[sig["inPlace"]]
     return res
@@ -188,6 +193,7 @@ def call_brute(ns, sig, args, filename):
 # ---------------------------------------------------------------------------
 SUPPORTED_PARAM = {"int", "long", "int[]", "long[]"}
 SUPPORTED_RET = {"void", "int", "long", "bool", "int[]"}
+SUPPORTED_JUDGE = {"sortedPrefix"}  # LeetCode custom judges, see ADR 025
 
 
 def check_signature(sig, where):
@@ -199,6 +205,12 @@ def check_signature(sig, where):
         fail("%s: return type %r is not supported yet (supported: %s)." % (where, sig["returns"], ", ".join(sorted(SUPPORTED_RET))))
     if sig["returns"] == "void" and not sig.get("inPlace"):
         fail("%s: returns 'void' needs \"inPlace\": the param that holds the answer." % where)
+    judge = sig.get("judge")
+    if judge is not None:
+        if judge not in SUPPORTED_JUDGE:
+            fail("%s: judge %r is not supported (supported: %s)." % (where, judge, ", ".join(sorted(SUPPORTED_JUDGE))))
+        if sig["returns"] != "int" or not sig.get("inPlace"):
+            fail("%s: judge 'sortedPrefix' needs returns 'int' (k) and \"inPlace\": the int[] param whose first k elements are the answer." % where)
 
 
 def encode_input(cases, sig):
@@ -219,7 +231,7 @@ def make_driver(lang, sig, src_path):
     scalar = {"int": "int", "long": "long long"}
     lines = []
     if lang == "cpp":
-        lines += ['#include "%s"' % src_path, "#include <iostream>", "#include <vector>", "#include <cstdlib>",
+        lines += ['#include "%s"' % src_path, "#include <iostream>", "#include <vector>", "#include <cstdlib>", "#include <algorithm>",
                   "static long long rd() { long long x; if (!(std::cin >> x)) std::exit(2); return x; }",
                   "template <class V> static void pr(const V& v) { std::cout << '['; for (size_t i = 0; i < v.size(); i++) { if (i) std::cout << ','; std::cout << v[i]; } std::cout << \"]\\n\"; }",
                   "int main() {", "  long long T = rd();", "  while (T--) {"]
@@ -234,7 +246,12 @@ def make_driver(lang, sig, src_path):
             call.append(n)
         expr = "Solution().%s(%s)" % (fn, ", ".join(call))
         r = sig["returns"]
-        if r == "void":
+        if sig.get("judge") == "sortedPrefix":
+            ip = sig["inPlace"]
+            lines += ["    long long k = %s;" % expr,
+                      '    if (k < 0 || k > (long long)%s.size()) { std::cout << "{\\"badK\\":" << k << "}\\n"; continue; }' % ip,
+                      "    %s.resize((size_t)k); std::sort(%s.begin(), %s.end()); pr(%s);" % (ip, ip, ip, ip)]
+        elif r == "void":
             lines += ["    %s;" % expr, "    pr(%s);" % sig["inPlace"]]
         elif r == "bool":
             lines.append('    std::cout << (%s ? "true" : "false") << "\\n";' % expr)
@@ -263,7 +280,13 @@ def make_driver(lang, sig, src_path):
                 lines.append("    %s %s = (%s)rd();" % (scalar[t], n, scalar[t]))
                 call.append(n)
         r = sig["returns"]
-        if r == "void":
+        if sig.get("judge") == "sortedPrefix":
+            ip = sig["inPlace"]
+            lines += ["    int k = %s(%s);" % (fn, ", ".join(call)),
+                      '    if (k < 0 || k > %sSize) { printf("{\\"badK\\":%%d}\\n", k); free(%s); continue; }' % (ip, ip),
+                      "    for (int i = 1; i < k; i++) for (int j = i; j > 0 && %s[j - 1] > %s[j]; j--) { int t = %s[j]; %s[j] = %s[j - 1]; %s[j - 1] = t; }" % ((ip,) * 6),
+                      "    pr(%s, k);" % ip]
+        elif r == "void":
             lines.append("    %s(%s);" % (fn, ", ".join(call)))
             sz, t = sizes[sig["inPlace"]]
             lines.append("    %s(%s, %s);" % ("prl" if t == "long[]" else "pr", sig["inPlace"], sz))

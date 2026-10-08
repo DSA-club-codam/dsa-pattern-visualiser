@@ -28,3 +28,4 @@ Why the visualiser is built the way it is. One file per decision. To change a de
 | 022 | One "Two pointers" label for the whole family (supersedes 018) |
 | 023 | No legend on problem pages for now; the data is kept |
 | 024 | GoatCounter analytics: the one external script (exception to 008) |
+| 025 | Custom judge: compare the sorted first k elements |

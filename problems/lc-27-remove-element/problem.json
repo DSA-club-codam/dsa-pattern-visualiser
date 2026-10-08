@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "title": "Remove Element",
+  "source": { "site": "LeetCode", "id": "27", "url": "https://leetcode.com/problems/remove-element/" },
+  "difficulty": "Easy",
+  "nMax": 100,
+  "signature": {
+    "python": "removeElement",
+    "cpp": "removeElement",
+    "c": "removeElement",
+    "params": [{ "name": "nums", "type": "int[]" }, { "name": "val", "type": "int" }],
+    "returns": "int",
+    "inPlace": "nums",
+    "judge": "sortedPrefix"
+  },
+  "constraints": [
+    {
+      "text": "0 ≤ nums.length ≤ 100",
+      "meaning": "The array can be empty and has at most 100 elements.",
+      "impact": "Even O(n²) is only 10⁴ steps, so brute force passes. One pass, O(n), is still the clean answer. The code must return 0 for an empty array."
+    },
+    {
+      "text": "0 ≤ nums[i] ≤ 50",
+      "meaning": "Small, non-negative values.",
+      "impact": "No overflow risk: int is enough in every language."
+    },
+    {
+      "text": "0 ≤ val ≤ 100",
+      "meaning": "val can be bigger than any value in nums.",
+      "impact": "val may not appear at all. Then nothing is removed and the answer is nums.length."
+    },
+    {
+      "text": "Remove in place (statement)",
+      "meaning": "You may not build a second array.",
+      "impact": "O(1) extra space. This rules out 'copy the kept values into a new array' and points to two pointers inside one array."
+    },
+    {
+      "text": "Only the first k elements count, in any order (statement)",
+      "meaning": "The judge sorts nums[0..k-1] before it checks them, and ignores everything after index k-1.",
+      "impact": "You never need to clean up the tail, and you may overwrite values freely. Copying each kept value forward is enough."
+    }
+  ],
+  "bruteForce": {
+    "summary": "each time you find val, shift everything after it one step left: O(n²) time, O(1) space. Copying the kept values into a new array is O(n) time, but it needs O(n) extra space, which breaks the in-place rule.",
+    "opsUnit": "element checks and moves"
+  },
+  "examples": [
+    { "id": "lc2", "label": "LeetCode Example 2: [0,1,2,2,3,0,4,2], val = 2", "kind": "main", "args": { "nums": [0, 1, 2, 2, 3, 0, 4, 2], "val": 2 }, "expected": [0, 0, 1, 3, 4] },
+    { "id": "lc1", "label": "LeetCode Example 1: [3,2,2,3], val = 3", "kind": "main", "args": { "nums": [3, 2, 2, 3], "val": 3 }, "expected": [2, 2] },
+    { "id": "no-match", "label": "val not in nums: [1,2,3], val = 4", "kind": "edge", "args": { "nums": [1, 2, 3], "val": 4 } },
+    { "id": "all-match", "label": "All equal to val: [7,7,7], val = 7", "kind": "edge", "args": { "nums": [7, 7, 7], "val": 7 } },
+    { "id": "empty", "label": "Empty: [], val = 0", "kind": "edge", "args": { "nums": [], "val": 0 } }
+  ]
+}

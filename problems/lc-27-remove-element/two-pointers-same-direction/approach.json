@@ -1,0 +1,28 @@
+{
+  "order": 1,
+  "name": "Two pointers (slow / fast)",
+  "pattern": "Two pointers",
+  "ds": ["Array"],
+  "time": "O(n)",
+  "space": "O(1) extra",
+  "whenToUse": "The standard answer: one pass, in place, and the kept values stay in their original order.",
+  "card": {
+    "signals": "\"remove in place\" (no copy allowed), \"return k\" and \"the first k elements\". Together they point to two pointers that move in the same direction: fast reads, slow writes.",
+    "pattern": "two pointers, same direction: both move left to right. One pass, O(n) time, O(1) extra space. Each element is read once and copied at most once.",
+    "coreIdea": "fast reads every element. When it is not val, copy it to slot slow and move slow on. At the end, slow is k: the number of values kept."
+  },
+  "invariant": "Left of slow: exactly the values read so far that are not val, in their original order. slow never passes fast.",
+  "phases": { "init": "start", "next": "next round", "compare": "keep", "skip": "skip val", "write": "copy", "advance": "slow++", "stop": "loop ends", "return": "done" },
+  "legend": [
+    { "swatch": "ptr-back", "text": "slow: next slot for a kept value" },
+    { "swatch": "ptr-front", "text": "fast: reads every element" },
+    { "swatch": "current", "text": "element being checked" },
+    { "swatch": "removed", "text": "equal to val: skipped" },
+    { "swatch": "new", "text": "slot just written" },
+    { "swatch": "done", "text": "kept value, in slots [0, slow)" },
+    { "swatch": "out", "text": "leftover value the judge ignores" },
+    { "swatch": "band-best", "text": "kept zone [0, slow)" },
+    { "swatch": "band-gap", "text": "free slots [slow, fast)" }
+  ],
+  "accepted": ["python", "cpp", "c"]
+}
