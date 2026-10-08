@@ -1,0 +1,24 @@
+{
+  "order": 1,
+  "name": "Two pointers (left / right)",
+  "pattern": "Two pointers",
+  "ds": ["Array"],
+  "time": "O(n)",
+  "space": "O(1)",
+  "whenToUse": "The standard answer for a sorted array: one pass and no extra memory.",
+  "card": {
+    "signals": "\"sorted\", \"find two numbers that add up to target\" and \"only constant extra space\". A sorted array plus a pair condition points to two pointers that start at both ends and move towards each other.",
+    "pattern": "two pointers, towards each other: left starts at the smallest value, right at the largest. Each round drops one value for good, so there are at most n − 1 rounds. O(n) time, O(1) space.",
+    "coreIdea": "If the sum is too small, the left value cannot be in any pair (even the largest partner is not enough), so left moves right. If the sum is too big, the right value cannot be in any pair, so right moves left."
+  },
+  "invariant": "If the answer pair exists, both of its indices are inside [left, right]. Every dropped value was too small or too big for every remaining partner.",
+  "phases": { "init": "start", "next": "next round", "compare": "compare", "left": "left++", "right": "right--", "return": "found" },
+  "legend": [
+    { "swatch": "ptr-back", "text": "left: smallest value still possible" },
+    { "swatch": "ptr-front", "text": "right: largest value still possible" },
+    { "swatch": "band-window", "text": "values that can still be in the pair [left, right]" },
+    { "swatch": "out", "text": "dropped: cannot be in any pair" },
+    { "swatch": "best", "text": "the answer pair" }
+  ],
+  "accepted": ["python", "cpp", "c"]
+}

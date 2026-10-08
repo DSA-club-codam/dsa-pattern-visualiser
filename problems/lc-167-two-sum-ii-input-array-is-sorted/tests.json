@@ -1,0 +1,6 @@
+[
+  { "name": "extreme values", "args": { "numbers": [-1000, 1000], "target": 0 }, "expected": [1, 2] },
+  { "name": "extremes, answer at the end", "args": { "numbers": [-1000, 0, 1000], "target": 1000 }, "expected": [2, 3] },
+  { "name": "two equal values", "args": { "numbers": [5, 5], "target": 10 }, "expected": [1, 2] },
+  { "name": "answer at the start", "args": { "numbers": [0, 0, 3, 4], "target": 0 }, "expected": [1, 2] }
+]
