@@ -26,5 +26,5 @@
     { "swatch": "bar", "text": "best window so far (cells turn green at the end)" },
     { "swatch": "slot", "text": "count slot used (dashed red = over k)" }
   ],
-  "accepted": []
+  "accepted": ["python", "cpp"]
 }
