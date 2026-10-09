@@ -1,0 +1,5 @@
+[
+  { "name": "largest values", "args": { "nums": [10000, 9999, 10000] }, "expected": 19999 },
+  { "name": "repeat right next to each other", "args": { "nums": [1, 1, 2, 2, 3, 3] }, "expected": 5 },
+  { "name": "best window at the end", "args": { "nums": [1, 1, 1, 8, 9] }, "expected": 18 }
+]

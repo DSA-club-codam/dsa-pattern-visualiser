@@ -1,0 +1,29 @@
+{
+  "order": 1,
+  "name": "Sliding window + counting array",
+  "pattern": "Sliding window",
+  "ds": ["Array"],
+  "time": "O(n)",
+  "space": "O(10⁴): one counter per possible value",
+  "whenToUse": "The standard answer. Values are at most 10⁴, so a counting array works; with bigger values you would use a hash set instead.",
+  "card": {
+    "signals": "\"subarray\" (contiguous), \"unique elements\" (a rule every window must keep) and \"maximum sum\". If a window has a repeat, every bigger window that contains it has the repeat too, so you can grow on the right and shrink on the left. All values are positive, so growing a unique window never lowers its sum.",
+    "pattern": "a variable-size window. Each index enters the window once (right) and leaves at most once (left), so the whole scan is O(n). A running total means the sum is never added up from scratch.",
+    "coreIdea": "add nums[right] to count and total. Only nums[right] can be a repeat, so move left to the right until its old copy is gone, taking each dropped value off total. Then compare total with best."
+  },
+  "invariant": "After each shrink loop, the window nums[left..right] has no repeats, and total is its sum.",
+  "phases": { "init": "start", "expand": "expand", "shrink": "shrink", "update": "best ↑", "compare": "compare", "return": "done", "next": "next round", "check": "while" },
+  "legend": [
+    { "swatch": "ptr-back", "text": "left: left edge of the window" },
+    { "swatch": "ptr-front", "text": "right: right edge (new element)" },
+    { "swatch": "band-window", "text": "current window [left, right]" },
+    { "swatch": "current", "text": "element just added" },
+    { "swatch": "conflict", "text": "added element that repeats a value" },
+    { "swatch": "dup", "text": "the older copy of that value" },
+    { "swatch": "removed", "text": "element being dropped" },
+    { "swatch": "out", "text": "left the window for good" },
+    { "swatch": "bar", "text": "window with the best sum so far (cells turn green at the end)" },
+    { "swatch": "slot", "text": "count slot used (dashed red = a repeat)" }
+  ],
+  "accepted": ["python", "cpp", "c"]
+}
