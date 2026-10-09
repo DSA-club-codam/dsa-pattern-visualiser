@@ -1,0 +1,5 @@
+[
+  { "name": "quote and backslash", "args": { "s": ["\"", "a", "\\"] }, "expected": ["\\", "a", "\""] },
+  { "name": "all the same", "args": { "s": ["z", "z", "z"] }, "expected": ["z", "z", "z"] },
+  { "name": "first and last printable ASCII", "args": { "s": [" ", "~"] }, "expected": ["~", " "] }
+]

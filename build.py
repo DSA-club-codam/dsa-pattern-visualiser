@@ -191,7 +191,7 @@ def call_brute(ns, sig, args, filename):
 # ---------------------------------------------------------------------------
 # C / C++ drivers
 # ---------------------------------------------------------------------------
-SUPPORTED_PARAM = {"int", "long", "int[]", "long[]", "string"}
+SUPPORTED_PARAM = {"int", "long", "int[]", "long[]", "string", "char[]"}
 SUPPORTED_RET = {"void", "int", "long", "bool", "int[]"}
 SUPPORTED_JUDGE = {"sortedPrefix"}  # LeetCode custom judges, see ADR 025
 
@@ -218,7 +218,7 @@ def encode_input(cases, sig):
     for args in cases:
         for p in sig["params"]:
             v = args[p["name"]]
-            if p["type"] == "string":  # character codes, so spaces and punctuation survive
+            if p["type"] in ("string", "char[]"):  # character codes, so spaces and punctuation survive
                 out.append(str(len(v)))
                 out.append(" ".join(str(ord(ch)) for ch in v))
             elif p["type"].endswith("[]"):
@@ -234,14 +234,18 @@ def make_driver(lang, sig, src_path):
     scalar = {"int": "int", "long": "long long"}
     lines = []
     if lang == "cpp":
-        lines += ['#include "%s"' % src_path, "#include <iostream>", "#include <string>", "#include <vector>", "#include <cstdlib>", "#include <algorithm>",
+        lines += ['#include "%s"' % src_path, "#include <iostream>", "#include <string>", "#include <vector>", "#include <cstdlib>", "#include <algorithm>", "#include <type_traits>",
                   "static long long rd() { long long x; if (!(std::cin >> x)) std::exit(2); return x; }",
-                  "template <class V> static void pr(const V& v) { std::cout << '['; for (size_t i = 0; i < v.size(); i++) { if (i) std::cout << ','; std::cout << v[i]; } std::cout << \"]\\n\"; }",
+                  "template <class V> static void pr(const V& v) { std::cout << '['; for (size_t i = 0; i < v.size(); i++) { if (i) std::cout << ','; "
+                  "if constexpr (std::is_same<typename V::value_type, char>::value) { std::cout << '\"'; if (v[i] == '\"' || v[i] == '\\\\') std::cout << '\\\\'; std::cout << v[i] << '\"'; } "  # chars as JSON strings
+                  "else std::cout << v[i]; } std::cout << \"]\\n\"; }",
                   "int main() {", "  long long T = rd();", "  while (T--) {"]
         call = []
         for p in sig["params"]:
             n, t = p["name"], p["type"]
-            if t == "string":
+            if t == "char[]":
+                lines.append("    std::vector<char> %s((size_t)rd()); for (auto& ch : %s) ch = (char)rd();" % (n, n))
+            elif t == "string":
                 lines.append("    std::string %s((size_t)rd(), ' '); for (auto& ch : %s) ch = (char)rd();" % (n, n))
             elif t.endswith("[]"):
                 et = scalar[t[:-2]]
@@ -269,12 +273,19 @@ def make_driver(lang, sig, src_path):
         lines += ["#include <stdio.h>", "#include <stdlib.h>", "#include <stdbool.h>", '#include "%s"' % src_path,
                   "static inline long long rd(void) { long long x; if (scanf(\"%lld\", &x) != 1) exit(2); return x; }",
                   "static inline void pr(const int* v, int n) { putchar('['); for (int i = 0; i < n; i++) { if (i) putchar(','); printf(\"%d\", v[i]); } printf(\"]\\n\"); }",
+                  "static inline void prc(const char* v, int n) { putchar('['); for (int i = 0; i < n; i++) { if (i) putchar(','); putchar('\"'); if (v[i] == '\"' || v[i] == '\\\\') putchar('\\\\'); putchar(v[i]); putchar('\"'); } printf(\"]\\n\"); }",
                   "static inline void prl(const long long* v, int n) { putchar('['); for (int i = 0; i < n; i++) { if (i) putchar(','); printf(\"%lld\", v[i]); } printf(\"]\\n\"); }",
-                  "int main(void) {", "  (void)pr; (void)prl;  /* clang warns about unused static inline helpers */", "  long long T = rd();", "  while (T--) {"]
+                  "int main(void) {", "  (void)pr; (void)prl; (void)prc;  /* clang warns about unused static inline helpers */", "  long long T = rd();", "  while (T--) {"]
         call, frees, sizes = [], [], {}
         for p in sig["params"]:
             n, t = p["name"], p["type"]
-            if t == "string":
+            if t == "char[]":
+                lines.append("    int %sSize = (int)rd(); char* %s = malloc((size_t)(%sSize ? %sSize : 1)); for (int i = 0; i < %sSize; i++) %s[i] = (char)rd();"
+                             % (n, n, n, n, n, n))
+                call += [n, n + "Size"]
+                frees.append(n)
+                sizes[n] = (n + "Size", t)
+            elif t == "string":
                 lines.append("    int %sLen = (int)rd(); char* %s = malloc((size_t)%sLen + 1); for (int i = 0; i < %sLen; i++) %s[i] = (char)rd(); %s[%sLen] = '\\0';"
                              % (n, n, n, n, n, n, n))
                 call.append(n)
@@ -299,7 +310,7 @@ def make_driver(lang, sig, src_path):
         elif r == "void":
             lines.append("    %s(%s);" % (fn, ", ".join(call)))
             sz, t = sizes[sig["inPlace"]]
-            lines.append("    %s(%s, %s);" % ("prl" if t == "long[]" else "pr", sig["inPlace"], sz))
+            lines.append("    %s(%s, %s);" % ({"long[]": "prl", "char[]": "prc"}.get(t, "pr"), sig["inPlace"], sz))
         elif r == "int[]":
             lines.append("    int returnSize = 0; int* res = %s(%s); pr(res, returnSize); free(res);" % (fn, ", ".join(call + ["&returnSize"])))
         elif r == "bool":

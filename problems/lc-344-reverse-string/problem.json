@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "title": "Reverse String",
+  "source": { "site": "LeetCode", "id": "344", "url": "https://leetcode.com/problems/reverse-string/" },
+  "difficulty": "Easy",
+  "nMax": 100000,
+  "signature": {
+    "python": "reverseString",
+    "cpp": "reverseString",
+    "c": "reverseString",
+    "params": [{ "name": "s", "type": "char[]" }],
+    "returns": "void",
+    "inPlace": "s"
+  },
+  "constraints": [
+    {
+      "text": "1 ≤ s.length ≤ 10⁵",
+      "meaning": "At least one character, at most 100,000.",
+      "impact": "O(n²) is about 10¹⁰ steps: far too slow. One pass, O(n), is the target. With one character there is nothing to swap."
+    },
+    {
+      "text": "s[i] is a printable ASCII character",
+      "meaning": "Letters, digits, spaces and punctuation.",
+      "impact": "Every character is treated the same: no skipping, no case changes. Only positions matter."
+    },
+    {
+      "text": "Modify s in place with O(1) extra memory (statement)",
+      "meaning": "You may not build a reversed copy.",
+      "impact": "Rules out 'copy backwards into a new array'. Swap characters inside s instead: the first with the last, the second with the second-to-last, and so on."
+    }
+  ],
+  "bruteForce": {
+    "summary": "build a reversed copy, then copy it back into s: O(n) time, but O(n) extra memory, which breaks the O(1) rule. Two pointers swap in place with O(1) memory.",
+    "opsUnit": "character copies"
+  },
+  "examples": [
+    { "id": "even", "label": "Even length: \"Codam DSA!\"", "kind": "main", "args": { "s": ["C", "o", "d", "a", "m", " ", "D", "S", "A", "!"] } },
+    { "id": "odd", "label": "Odd length: \"Hi, Codam\"", "kind": "main", "args": { "s": ["H", "i", ",", " ", "C", "o", "d", "a", "m"] } },
+    { "id": "lc1", "label": "LeetCode Example 1: \"hello\"", "kind": "edge", "args": { "s": ["h", "e", "l", "l", "o"] }, "expected": ["o", "l", "l", "e", "h"] },
+    { "id": "lc2", "label": "LeetCode Example 2: \"Hannah\"", "kind": "edge", "args": { "s": ["H", "a", "n", "n", "a", "h"] }, "expected": ["h", "a", "n", "n", "a", "H"] },
+    { "id": "single", "label": "One character: \"x\"", "kind": "edge", "args": { "s": ["x"] } },
+    { "id": "two", "label": "Two characters: \"ab\"", "kind": "edge", "args": { "s": ["a", "b"] } }
+  ]
+}

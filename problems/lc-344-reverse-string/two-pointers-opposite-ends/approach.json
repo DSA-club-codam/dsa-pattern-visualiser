@@ -1,0 +1,24 @@
+{
+  "order": 1,
+  "name": "Two pointers (left / right)",
+  "pattern": "Two pointers",
+  "ds": ["Array", "String"],
+  "time": "O(n)",
+  "space": "O(1)",
+  "whenToUse": "The standard answer: n / 2 swaps, in place, no extra array.",
+  "card": {
+    "signals": "\"reverse\" means the first character trades places with the last, the second with the second-to-last, and so on. \"In place with O(1) extra memory\" rules out building a reversed copy. Both point to two pointers that start at the ends and swap as they move towards each other.",
+    "pattern": "two pointers, towards each other: left starts at index 0, right at the last index. One swap per round, n / 2 rounds. O(n) time, O(1) extra space.",
+    "coreIdea": "Swap s[left] and s[right], then move both inwards. When they meet or cross, every character is in its reversed place. In an odd-length string the middle character never moves."
+  },
+  "invariant": "Everything outside [left, right] is already in its final, reversed place. Inside [left, right] nothing has moved yet.",
+  "phases": { "init": "start", "next": "next round", "swap": "swap", "move": "move in", "return": "done" },
+  "legend": [
+    { "swatch": "ptr-back", "text": "left: next character from the front" },
+    { "swatch": "ptr-front", "text": "right: next character from the back" },
+    { "swatch": "band-window", "text": "not reversed yet [left, right]" },
+    { "swatch": "swap", "text": "swap pair (with the \"swap\" arc)" },
+    { "swatch": "done", "text": "in its final place" }
+  ],
+  "accepted": ["python", "cpp", "c"]
+}
