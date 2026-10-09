@@ -1,6 +1,6 @@
 /* Generated from problems/lc-2958-length-of-longest-subarray-with-at-most-k-frequency/sliding-window-hash-map/canvas.js */
 VIZ.canvas.register("lc-2958-length-of-longest-subarray-with-at-most-k-frequency/sliding-window-hash-map", /* LC 2958 · sliding window + hash map.
-   Reads step.state = { arr, k, left, right, window, rows, over, best, bestWindow }
+   Reads step.state = { arr, k, left, right, window, rows, over, length, longest, bestWindow }
    and step.roles = { pos: "current" | "conflict" | "removed" }.
    Draws only with VIZ.ArrayRow and VIZ.countMap — no colours or sizes here. */
 ({
@@ -27,13 +27,13 @@ VIZ.canvas.register("lc-2958-length-of-longest-subarray-with-at-most-k-frequency
       arr: s.arr,
       cls,
       tags,
-      bands: w ? [{ kind: "window", from: w[0], to: w[1], label: `window [${w[0]}, ${w[1]}] · length ${w[1] - w[0] + 1}` }] : [],
+      bands: w ? [{ kind: "window", from: w[0], to: w[1], label: `window [${w[0]}, ${w[1]}]` + (s.length !== null ? ` · length ${s.length}` : "") }] : [],
       pointers: [
         { role: "back", label: "left", at: right === null ? null : left },
         { role: "front", label: "right", at: right },
       ],
       bar: s.bestWindow
-        ? { from: s.bestWindow[0], to: s.bestWindow[1], label: `best window [${s.bestWindow[0]}, ${s.bestWindow[1]}] · length ${s.best}` }
+        ? { from: s.bestWindow[0], to: s.bestWindow[1], label: `best window [${s.bestWindow[0]}, ${s.bestWindow[1]}] · longest ${s.longest}` }
         : null,
     });
     VIZ.countMap(ctx.mapPanel, s.rows, s.k, `count <small>(value → times in window, limit k = ${s.k})</small>`);

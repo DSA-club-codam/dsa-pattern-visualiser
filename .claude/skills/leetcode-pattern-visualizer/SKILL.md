@@ -116,6 +116,15 @@ When you notice yourself worrying about something unlikely ("what if LeetCode re
 | Binary search | lo / mid / hi | back / mid / front |
 Code variable names must match the labels on the canvas.
 
+## Labels
+Applies to everything that names a value: labels on or under the array, and the variables panel.
+- Every value shown in the visual is a named variable in the code, with the exact same name. Do not use a synonym (sum vs total, max vs best, etc.).
+- If the code computes it inline, introduce a variable for it (e.g. `length = right - left + 1` before `longest = max(longest, length)`).
+- Names explain themselves. Short names are fine, but clarity wins over length (`longest`, `largest`, not `best` for both).
+- Multi-word names use snake_case in all three languages (Python, C++, C), so the name is identical everywhere.
+- The shown value equals the code's value at that step. A variable declared inside the loop (C/C++ scope) shows "—" on steps where it does not exist yet or any more; reset it in the Python trace to match.
+- Pointer labels follow the same rule (see Pointer names).
+
 ## Captions
 - Each caption says what happened and why, in 1–2 sentences, using the code's variable names.
 - Name the decision, not only the action: "nums[mid] = 7 > target, so the target can only be in the left half", not "move hi".
