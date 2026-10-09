@@ -1,0 +1,25 @@
+{
+  "order": 1,
+  "name": "Two pointers (left / right)",
+  "pattern": "Two pointers",
+  "ds": ["String"],
+  "time": "O(n)",
+  "space": "O(1)",
+  "whenToUse": "The standard answer: one pass from both ends, no cleaned copy of the string.",
+  "card": {
+    "signals": "\"reads the same forward and backward\" means the first character must equal the last, the second the second-to-last, and so on. \"Removing non-alphanumeric characters\" means some characters must be skipped on the way. Both point to two pointers that start at the ends and move towards each other.",
+    "pattern": "two pointers, towards each other: left starts at index 0, right at the last index. Each character is looked at once at most. O(n) time, O(1) extra space.",
+    "coreIdea": "Move each pointer past characters that do not count, then compare the two characters in lowercase. If they differ, it is not a palindrome. If they match, move both inwards. When the pointers meet, every pair has matched."
+  },
+  "invariant": "Every letter or digit outside [left, right] has already been matched with its mirror partner.",
+  "phases": { "init": "start", "next": "next round", "skip": "skip", "compare": "match", "mismatch": "mismatch", "move": "move in", "return": "done" },
+  "legend": [
+    { "swatch": "ptr-back", "text": "left: next character from the front" },
+    { "swatch": "ptr-front", "text": "right: next character from the back" },
+    { "swatch": "band-window", "text": "not checked yet [left, right]" },
+    { "swatch": "out", "text": "skipped: not a letter or digit" },
+    { "swatch": "done", "text": "matched with its mirror partner" },
+    { "swatch": "conflict", "text": "the pair that does not match" }
+  ],
+  "accepted": ["python", "cpp", "c"]
+}

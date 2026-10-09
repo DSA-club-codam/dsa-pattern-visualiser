@@ -1,0 +1,7 @@
+[
+  { "name": "LeetCode Example 1 (30 characters, too long to animate)", "args": { "s": "A man, a plan, a canal: Panama" }, "expected": true },
+  { "name": "case differs only", "args": { "s": "Aa" }, "expected": true },
+  { "name": "digits", "args": { "s": "1a2" }, "expected": false },
+  { "name": "punctuation at both ends", "args": { "s": "?!ab-BA!?" }, "expected": true },
+  { "name": "every printable symbol type", "args": { "s": "~`@#$%^&*()_+=[]{}|;\"<>/\\" }, "expected": true }
+]

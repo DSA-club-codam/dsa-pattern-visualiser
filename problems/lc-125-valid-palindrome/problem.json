@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "title": "Valid Palindrome",
+  "source": { "site": "LeetCode", "id": "125", "url": "https://leetcode.com/problems/valid-palindrome/" },
+  "difficulty": "Easy",
+  "nMax": 200000,
+  "signature": {
+    "python": "isPalindrome",
+    "cpp": "isPalindrome",
+    "c": "isPalindrome",
+    "params": [{ "name": "s", "type": "string" }],
+    "returns": "bool"
+  },
+  "constraints": [
+    {
+      "text": "1 ≤ s.length ≤ 2 × 10⁵",
+      "meaning": "The string is never empty and has at most 200,000 characters.",
+      "impact": "O(n²) is about 4 × 10¹⁰ steps: far too slow. One pass, O(n), is the target. s can still have no letters or digits at all, like \" \"."
+    },
+    {
+      "text": "s consists only of printable ASCII characters",
+      "meaning": "Letters, digits, spaces and punctuation. No accents, no emoji.",
+      "impact": "isalnum and tolower from the standard library are enough in every language."
+    },
+    {
+      "text": "Lowercase everything, remove non-alphanumeric characters (statement)",
+      "meaning": "'A' and 'a' count as the same; spaces, commas and colons do not count at all.",
+      "impact": "Compare tolower(s[left]) with tolower(s[right]), and move a pointer past any character that is not a letter or digit."
+    },
+    {
+      "text": "Alphanumeric = letters and numbers (statement)",
+      "meaning": "Digits stay in the comparison.",
+      "impact": "\"0P\" is not a palindrome: '0' and 'p' are different. Do not skip digits."
+    }
+  ],
+  "bruteForce": {
+    "summary": "build a cleaned, lowercase copy of s and compare it with its reverse: O(n) time, but O(n) extra space for the copy. Two pointers do the same check in O(1) extra space.",
+    "opsUnit": "character checks"
+  },
+  "examples": [
+    { "id": "taco-cat", "label": "Mixed: \"Taco cat!\"", "kind": "main", "args": { "s": "Taco cat!" } },
+    { "id": "lc2", "label": "LeetCode Example 2: \"race a car\"", "kind": "main", "args": { "s": "race a car" }, "expected": false },
+    { "id": "lc3", "label": "LeetCode Example 3: \" \"", "kind": "edge", "args": { "s": " " }, "expected": true },
+    { "id": "digit-letter", "label": "Digit and letter: \"0P\"", "kind": "edge", "args": { "s": "0P" } },
+    { "id": "no-alnum", "label": "Only punctuation: \".,!\"", "kind": "edge", "args": { "s": ".,!" } },
+    { "id": "single", "label": "One letter: \"a\"", "kind": "edge", "args": { "s": "a" } }
+  ]
+}

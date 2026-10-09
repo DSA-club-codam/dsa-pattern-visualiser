@@ -14,7 +14,7 @@ schemaVersion: 1. All files are plain JSON (no comments, no trailing commas). Py
   "nMax": 10000,                         // largest n from the constraints; highlights the rule-of-thumb row
   "signature": {
     "python": "moveZeroes", "cpp": "moveZeroes", "c": "moveZeroes",
-    "params": [{ "name": "nums", "type": "int[]" }],   // int | long | int[] | long[]
+    "params": [{ "name": "nums", "type": "int[]" }],   // int | long | int[] | long[] | string
     "returns": "void",                                  // void | int | long | bool | int[]
     "inPlace": "nums",                                  // required when returns = void
     "judge": "sortedPrefix"                             // optional (ADR 025): returns int k; the answer is

@@ -191,7 +191,7 @@ def call_brute(ns, sig, args, filename):
 # ---------------------------------------------------------------------------
 # C / C++ drivers
 # ---------------------------------------------------------------------------
-SUPPORTED_PARAM = {"int", "long", "int[]", "long[]"}
+SUPPORTED_PARAM = {"int", "long", "int[]", "long[]", "string"}
 SUPPORTED_RET = {"void", "int", "long", "bool", "int[]"}
 SUPPORTED_JUDGE = {"sortedPrefix"}  # LeetCode custom judges, see ADR 025
 
@@ -218,7 +218,10 @@ def encode_input(cases, sig):
     for args in cases:
         for p in sig["params"]:
             v = args[p["name"]]
-            if p["type"].endswith("[]"):
+            if p["type"] == "string":  # character codes, so spaces and punctuation survive
+                out.append(str(len(v)))
+                out.append(" ".join(str(ord(ch)) for ch in v))
+            elif p["type"].endswith("[]"):
                 out.append(str(len(v)))
                 out.append(" ".join(str(x) for x in v))
             else:
@@ -231,14 +234,16 @@ def make_driver(lang, sig, src_path):
     scalar = {"int": "int", "long": "long long"}
     lines = []
     if lang == "cpp":
-        lines += ['#include "%s"' % src_path, "#include <iostream>", "#include <vector>", "#include <cstdlib>", "#include <algorithm>",
+        lines += ['#include "%s"' % src_path, "#include <iostream>", "#include <string>", "#include <vector>", "#include <cstdlib>", "#include <algorithm>",
                   "static long long rd() { long long x; if (!(std::cin >> x)) std::exit(2); return x; }",
                   "template <class V> static void pr(const V& v) { std::cout << '['; for (size_t i = 0; i < v.size(); i++) { if (i) std::cout << ','; std::cout << v[i]; } std::cout << \"]\\n\"; }",
                   "int main() {", "  long long T = rd();", "  while (T--) {"]
         call = []
         for p in sig["params"]:
             n, t = p["name"], p["type"]
-            if t.endswith("[]"):
+            if t == "string":
+                lines.append("    std::string %s((size_t)rd(), ' '); for (auto& ch : %s) ch = (char)rd();" % (n, n))
+            elif t.endswith("[]"):
                 et = scalar[t[:-2]]
                 lines.append("    std::vector<%s> %s((size_t)rd()); for (auto& x : %s) x = (%s)rd();" % (et, n, n, et))
             else:
@@ -269,7 +274,12 @@ def make_driver(lang, sig, src_path):
         call, frees, sizes = [], [], {}
         for p in sig["params"]:
             n, t = p["name"], p["type"]
-            if t.endswith("[]"):
+            if t == "string":
+                lines.append("    int %sLen = (int)rd(); char* %s = malloc((size_t)%sLen + 1); for (int i = 0; i < %sLen; i++) %s[i] = (char)rd(); %s[%sLen] = '\\0';"
+                             % (n, n, n, n, n, n, n))
+                call.append(n)
+                frees.append(n)
+            elif t.endswith("[]"):
                 et = scalar[t[:-2]]
                 lines.append("    int %sSize = (int)rd(); %s* %s = malloc(sizeof(%s) * (%sSize ? %sSize : 1)); for (int i = 0; i < %sSize; i++) %s[i] = (%s)rd();"
                              % (n, et, n, et, n, n, n, n, et))
@@ -495,7 +505,7 @@ def build_problem(pb, n_random):
             kind = ex.get("kind", "main")
             if kind == "main" and not 15 <= len(tr.steps) <= 40:
                 log("  ! warning: example %s has %d steps (aim for 15–40 on main examples)" % (ex["id"], len(tr.steps)))
-            n = max((len(v) for v in ex["args"].values() if isinstance(v, list)), default=0)
+            n = max((len(v) for v in ex["args"].values() if isinstance(v, (list, str))), default=0)
             if n > 20:
                 fail("%s: example %s has %d elements; the renderer limit is 20" % (where, ex["id"], n))
             if kind == "main" and n > 10:
